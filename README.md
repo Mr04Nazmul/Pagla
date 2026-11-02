@@ -6,6 +6,14 @@ A **playable 3D browser-game prototype** inspired by the rural villages of Bangl
 
 GitHub Pages: https://mr04nazmul.github.io/Pagla/
 
+## Browser visual update (2026-11-03)
+
+The root `index.html` is now **v2**. A saved copy of the original is `legacy.html`, and `v2.html` is kept for comparison.
+
+**Implemented in v2:** improved shaded/noisy terrain, darker rural colors, puddles, more roof detailing, bamboo fences, extra grass/soil detail, cinematic lower camera, and an original procedural adult civilian character with rounded head, facial features, clothing, and animated arms/legs when walking.
+
+**Reality check:** the browser version is still a **stylized/procedural WebGL prototype, NOT photorealism**. High-end realism requires licensed realistic 3D human/foliage/environment assets and a true 3D game-asset pipeline (see the Unreal Engine 5 source project). A JavaScript runtime/gameplay test passed with a mocked graphics driver; GPU rendering couldn't be visually verified in the test environment.
+
 ## Gameplay
 
 - Walk around a stylized Bangladeshi village, including dirt roads, village houses, a pond, crops, trees, and local shops.
