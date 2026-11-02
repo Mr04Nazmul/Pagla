@@ -4,7 +4,7 @@ A **playable 3D browser-game prototype** inspired by the rural villages of Bangl
 
 ## Play
 
-GitHub Pages (once Pages deployment is enabled): https://mr04nazmul.github.io/Pagla/
+GitHub Pages: https://mr04nazmul.github.io/Pagla/
 
 ## Gameplay
 
@@ -31,7 +31,7 @@ Shift or the on-screen run button to move faster while on foot.
 
 ## Development
 
-This is **an early low-poly playable prototype**, not a GTA-like photorealistic game. The village is fictional, inspired by Bangladesh; it does not claim precise real-world geography. This repo contains the source game, and automatic GitHub Pages deployment workflow.
+This is **an early low-poly playable prototype**, not a GTA-like photorealistic game. The village is fictional, inspired by Bangladesh; it does not claim precise real-world geography. This repo contains the source game. GitHub Pages publishes the static files directly from the `main` branch (repository root).
 
 ### Roadmap
 
