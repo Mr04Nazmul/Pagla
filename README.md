@@ -43,3 +43,10 @@ This is **an early low-poly playable prototype**, not a GTA-like photorealistic 
 ## License
 
 All rights reserved by repository owner unless an explicit license is added.
+
+
+## Unreal Engine 5 — realistic countryside edition (work in progress)
+
+The UE5 source project is now in [Unreal/GramBangla](Unreal/GramBangla/README.md). It includes a C++ third-person movement prototype and an editor-only Python script to generate a rural Bangladesh blockout (tin houses, paddy fields, pond, market, footbridge and dirt road). It is **not** compiled or yet photorealistic.
+
+**Important:** Unreal Engine cannot run directly on GitHub Pages; the browser game here remains the WebGL prototype. Running high-fidelity UE5 in a mobile browser requires a packaged UE5 game plus a GPU-hosted Pixel Streaming service.
