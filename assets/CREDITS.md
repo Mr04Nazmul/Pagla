@@ -66,3 +66,15 @@ The updated facades, signboards, verandas, wood items, clustered trees, mobile c
 - Tall Coconut Palm (Tropical Island and Palm Trees), ~4.2k triangles, CC0: https://3dassets.dev/assets/tropical-island-ecology-tall-coconut-palm (GLB: https://cdn.3dassets.dev/assets/6797/v1/model.glb)
 - Buttressed emergent tree (Tropical Island and Palm Trees), 3.2k triangles, CC0: https://3dassets.dev/assets/tropical-island-ecology-buttressed-emergent-68f09c03 (GLB: https://cdn.3dassets.dev/assets/6818/v1/model.glb)
 Both models stream through official Three.js GLTFLoader and replace some empty or primitive roadside gaps; they remain stylized compared with scanned AAA foliage.
+
+## Rural crop and village-crowd GLBs (2026-11-03, active src/game.js)
+
+The active mobile web game streams three additional source assets. They are original CC0 low-poly models; they are **not** realistic Bangladesh-specific clothing scans. All are placed sparsely in the world and can fail without preventing gameplay.
+
+| Model | Source page | Runtime GLB | Licence |
+|---|---|---|---|
+| Mature rice crop | https://3dassets.dev/assets/cozy-farm-and-homestead-rice-mature-28d8a6a5 | https://cdn.3dassets.dev/assets/19389/v1/model.glb | CC0 |
+| Village man, tunic (static pose) | https://3dassets.dev/assets/low-poly-character-figures-villager-man-bfcdf400 | https://cdn.3dassets.dev/assets/36378/v1/model.glb | CC0 |
+| Village woman, tunic (static pose) | https://3dassets.dev/assets/low-poly-character-figures-villager-woman-e985e516 | https://cdn.3dassets.dev/assets/36379/v1/model.glb | CC0 |
+
+Models are not authored, rigged, or photorealistic CGI by this repository, and are not claimed as such.
