@@ -38,3 +38,24 @@ The main player character is an optional **rigged GLB with Walk and Run clips**,
 - Falls back to Pagla's own procedural articulated player if it cannot load.
 
 **Original procedural enhancements:** atmospheric sky shader by Three.js Sky (MIT), rust/corrugated tin maps, grass, pebbles and irregular puddles are authored in Pagla's JavaScript, not extracted from screenshots. Poly Haven is not used through its API: only optional static CC0 file URLs are referenced.
+
+
+## November 3, 2026 — mobile HD environment additions
+
+The following **9 extra CC0 GLB models** are loaded progressively from their published immutable CORS-enabled URLs. The HD animals are static poses (not rigged or animated); only the villagers and hero use humanoid animation. Loading any external file can fail on poor networks, and the playable game must not depend on it.
+
+| In-game asset | Source page | Direct GLB | Published licence |
+|---|---|---|---|
+| Holstein dairy cow | https://3dassets.dev/assets/farm-and-working-animals-hd-dairy-cow-holstein-00db2fd7 | https://cdn.3dassets.dev/assets/29184/v1/model.glb | CC0 |
+| Jersey dairy cow | https://3dassets.dev/assets/farm-and-working-animals-hd-dairy-cow-jersey-50e14fe8 | https://cdn.3dassets.dev/assets/29185/v1/model.glb | CC0 |
+| Goat | https://3dassets.dev/assets/farm-and-working-animals-hd-goat-2e75f520 | https://cdn.3dassets.dev/assets/29192/v1/model.glb | CC0 |
+| Realistic undergrowth patch | https://3dassets.dev/assets/jungle-temple-and-stone-city-undergrowth-patch-dc35043c | https://cdn.3dassets.dev/assets/36145/v1/model.glb | CC0 |
+| Young palm | https://3dassets.dev/assets/jungle-temple-and-stone-city-palm-sapling-6702b25c | https://cdn.3dassets.dev/assets/36142/v1/model.glb | CC0 |
+| Hay bale | https://3dassets.dev/assets/farm-and-working-animals-hd-hay-bale-round-e1b0854b | https://cdn.3dassets.dev/assets/29213/v1/model.glb | CC0 |
+| Water trough | https://3dassets.dev/assets/farm-and-working-animals-hd-water-trough-b6c599b6 | https://cdn.3dassets.dev/assets/29217/v1/model.glb | CC0 |
+| Milk churns | https://3dassets.dev/assets/farm-and-working-animals-hd-milk-churns-3a9c9514 | https://cdn.3dassets.dev/assets/29219/v1/model.glb | CC0 |
+| Wheelbarrow | https://3dassets.dev/assets/farm-and-working-animals-hd-wheelbarrow-39366663 | https://cdn.3dassets.dev/assets/29218/v1/model.glb | CC0 |
+
+**Quest NPC:** Realistic middle-aged man in navy quarter-zip and jeans, rigged GLB with a walking clip, CC0. Original: https://vibeassets.io/a/grzp782xf7 ; https://vibeassets.io/download/grzp782xf7?combined=1 . As with the player character, an original fallback mesh remains if the asset is unavailable.
+
+The updated facades, signboards, verandas, wood items, clustered trees, mobile character shadows and quest objectives are original procedurally generated meshes or authored texture canvases. No GTA copyrighted assets, user reference screenshot pixels, or other commercial-game meshes are imported. Third-party model and library licenses remain their own.
