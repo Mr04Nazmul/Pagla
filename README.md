@@ -73,3 +73,9 @@ The current mobile browser edition now imports `village-upgrade.js`, which exten
 All GLB files are loaded from the source CDN at runtime and can fail independently; original fallback gameplay remains playable. The imported human models are *static low-poly figures*, not photorealistic rigged actors. The models do not yet provide native iOS/Android game packages or advanced physics. This is still a mobile-friendly 3D web prototype, not GTA V quality.
 
 See [ASSETS.md](ASSETS.md) for all source asset URLs and CC0 licensing.
+
+## Picture-reference visual pass (2026-11-03, r6)
+
+The active web entrypoint now loads `src/cinematic-reference.js`. It adds an original detailed Bangladeshi tea stall with a Bengali sign, cups/kettle/benches, a denser instanced rice layer, bamboo fencing, lotus patches at the mission pond, and a roadside motorcycle. The motorcycle first attempts an optional realistic CC0 GLB (Innerscene) and falls back to original geometry if the remote host blocks it. This upgrade changes **interactive 3D geometry**, not just the splash image.
+
+Graphics toggle cycles `LOW → HIGH → CINEMATIC → LOW`. On mobile a slow frame rate triggers a step down to keep it playable. On modern iPhone/Android, users can choose cinematic, but performance and appearance are hardware dependent. The original generated reference picture is an *illustrative target*, not proof of achieved photorealism. This prototype still cannot reproduce the exact level of an offline AAA game screenshot, especially in Safari on phones. The real WebGL/GPU render must be device-tested.
