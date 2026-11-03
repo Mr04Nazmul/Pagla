@@ -5,6 +5,10 @@
 const root = 'https://cdn.3dassets.dev/assets/';
 export const ASSETS = Object.freeze({
   banana: {url: root+'38579/v1/model.glb', size: 64, metres: [2.01,2.45,1.603]},
+  // CC0 rural-life additions: sparse mobile placement, not AAA photogrammetry.
+  ricePlant: {url: root+'19389/v1/model.glb', metres: [.484,.819,.45]},
+  villageMan: {url: root+'36378/v1/model.glb', metres: [.616,1.76,.305]},
+  villageWoman: {url: root+'36379/v1/model.glb', metres: [.511,1.668,.607]},
   bamboo: {url: root+'38590/v1/model.glb', size: 312, metres: [1.192,3.304,1.18]},
   tea: {url: root+'36551/v1/model.glb', size: 74, metres: [2.02,2.471,.78]},
   cng: {url: root+'36560/v1/model.glb', size: 28, metres: [1.54,2.188,2.634]},
