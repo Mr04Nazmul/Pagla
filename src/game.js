@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { installVillageUpgrade } from '../village-upgrade.js?v=20261103r5';
+import { addCinematicVillage } from './cinematic-reference.js?v=20261103r6';
 import { ASSETS, MISSIONS } from './asset-manifest.js?v=20261103r5';
 import { installRealism } from './realism.js?v=20261103r4';
 import { createCharacterMotion } from './character-motion.js?v=20261103r4';
@@ -287,6 +288,7 @@ for(const z of [-.66,.7]){const wh=new THREE.Mesh(new THREE.TorusGeometry(.32,.0
 const loader=new GLTFLoader();
 // Optional lightweight village structures and crowd details; gameplay remains independent.
 const villageExtras=installVillageUpgrade({scene,loader,mobile,roadX,roofMat:tin,onStatus:message=>{const node=$('upgrade');if(node)node.textContent=message;}});
+const referenceScenery=addCinematicVillage({scene,loader,roadX,mobile});
 const assetsLoaded=new Set(),assetsFailed=new Set(),assetRoots={};
 let pending=Object.keys(ASSETS).length;
 function progress(){
@@ -451,9 +453,20 @@ interact.addEventListener('click',act);
 $('start').addEventListener('click',()=>{playing=true;$('splash').classList.add('hidden');toast('🇧🇩 গ্রামের সমস্যা: মেম্বারের সঙ্গে কথা বলো');});
 if(new URLSearchParams(location.search).has('autoplay'))$('start').click();
 
-let q=mobile?'low':'high',dpr=1;
-const quality=()=>{const density=Math.min(devicePixelRatio||1,mobile?(q==='high'?1.5:1.08):(q==='high'?1.8:1.22));dpr=density;renderer.setPixelRatio(dpr);$('toggle').textContent=`⚙︎ GRAPHICS: ${q.toUpperCase()}`;sun.castShadow=q==='high';renderer.shadowMap.enabled=q==='high';realism.setQuality(q);resize();};
-$('toggle').addEventListener('click',()=>{q=q==='high'?'low':'high';quality();toast(q==='high'?'✨ High quality':'⚡ Battery saver');});
+let q=mobile?'high':'cinematic',dpr=1;
+const quality=()=>{
+  const px=q==='cinematic'?(mobile?1.65:2):q==='high'?(mobile?1.32:1.7):(mobile?.95:1.16);
+  dpr=Math.min(devicePixelRatio||1,px);renderer.setPixelRatio(dpr);
+  $('toggle').textContent=`⚙︎ ${q==='cinematic'?'CINEMATIC':q.toUpperCase()}`;
+  const withShadows=q==='cinematic'||(!mobile&&q==='high');
+  sun.castShadow=withShadows;renderer.shadowMap.enabled=withShadows;
+  if(withShadows)sun.shadow.mapSize.set(mobile?512:1024,mobile?512:1024);
+  realism.setQuality(q);referenceScenery.setQuality(q);resize();
+};
+$('toggle').addEventListener('click',()=>{
+  q=q==='low'?'high':q==='high'?'cinematic':'low';quality();
+  toast(q==='cinematic'?'🎬 Cinematic graphics · বেশি GPU':q==='high'?'✨ সুন্দর গ্রাফিক্স':'⚡ Battery saver');
+});
 function resize(){const width=innerWidth,height=innerHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();}
 quality();addEventListener('resize',resize,{passive:true});
 const camAt=new THREE.Vector3(player.x,2.4,player.z+7),focus=new THREE.Vector3(),temp=new THREE.Vector3();
@@ -525,7 +538,7 @@ function frame(now){
   const dt=Math.min(.05,Math.max(.002,(now-last)/1000));last=now;
   update(dt);villageExtras.update(dt,now);realism.update(camera);renderer.render(scene,camera);frameCounter++;
   if(frameCounter%12===0){minimap();fpsValue=Math.round(1/dt);$('fps').textContent=`${fpsValue} FPS · ${assetsLoaded.size} GLB models`;
-    if(playing&&mobile&&q==='high'&&fpsValue<24){if(++lowFrames>8){q='low';quality();toast('⚡ FPS উন্নত করতে graphics কমানো হয়েছে');}} else lowFrames=Math.max(0,lowFrames-2);
+    if(playing&&mobile&&q!=='low'&&fpsValue<24){if(++lowFrames>8){q=q==='cinematic'?'high':'low';lowFrames=0;quality();toast('⚡ FPS ঠিক রাখতে graphics কমানো হয়েছে');}} else lowFrames=Math.max(0,lowFrames-2);
   }
   requestAnimationFrame(frame);
 }
