@@ -5,7 +5,7 @@ import { addCinematicVillage } from './cinematic-reference.js?v=20261103r7';
 import { makeFoliageCrown } from './natural-foliage.js?v=20261103r7';
 import { addPhotographicMaterials } from './photo-materials.js?v=20261103r7';
 import { ASSETS, MISSIONS } from './asset-manifest.js?v=20261103r5';
-import { installRealism } from './realism.js?v=20261103r4';
+import { installRealism } from './realism.js?v=20261103r7';
 import { createCharacterMotion } from './character-motion.js?v=20261103r4';
 import { decorateVillage } from './village-detail.js?v=20261103r4';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
@@ -289,7 +289,7 @@ for(const z of [-.66,.7]){const wh=new THREE.Mesh(new THREE.TorusGeometry(.32,.0
 const loader=new GLTFLoader();
 // Optional lightweight village structures and crowd details; gameplay remains independent.
 const villageExtras=installVillageUpgrade({scene,loader,mobile,roadX,roofMat:tin,onStatus:message=>{const node=$('upgrade');if(node)node.textContent=message;}});
-const referenceScenery=addCinematicVillage({scene,loader,roadX,mobile});
+const referenceScenery=addCinematicVillage({scene,loader,roadX,mobile,roofTin:tin,roofRust:rust});
 const photoMaterials=addPhotographicMaterials({grassMat,dirtMat,tin,rust,renderer,onProgress:({loaded,failed,total})=>{
   const target=$('photoStatus');if(target)target.textContent=`Real photo textures: ${loaded}/${total}${failed?' · '+failed+' fallback':''}`;
 }});
@@ -457,7 +457,7 @@ interact.addEventListener('click',act);
 $('start').addEventListener('click',()=>{playing=true;$('splash').classList.add('hidden');toast('🇧🇩 গ্রামের সমস্যা: মেম্বারের সঙ্গে কথা বলো');});
 if(new URLSearchParams(location.search).has('autoplay'))$('start').click();
 
-let q=mobile?'high':'cinematic',dpr=1;
+let q='cinematic',dpr=1;
 const quality=()=>{
   const px=q==='cinematic'?(mobile?1.65:2):q==='high'?(mobile?1.32:1.7):(mobile?.95:1.16);
   dpr=Math.min(devicePixelRatio||1,px);renderer.setPixelRatio(dpr);
