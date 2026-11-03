@@ -39,7 +39,7 @@ function updateBuildingCount(){
   $('count').textContent=recentCount+' visible footprints';
   $('export').disabled=recentCount===0;
 }
-if(!maplibregl || !maplibregl.supported()) {
+if(!maplibregl || (typeof maplibregl.supported === 'function' && !maplibregl.supported())) {
   fatal('এই ডিভাইসে WebGL/MapLibre চালু করা যাচ্ছে না। iPhone Safari বা Android Chrome আপডেট করে চেষ্টা করো।');
 } else {
   try {
