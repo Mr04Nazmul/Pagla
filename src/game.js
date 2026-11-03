@@ -305,13 +305,48 @@ addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight
 addEventListener('keyup',e=>keys.delete(e.code));
 addEventListener('blur',()=>{keys.clear();resetJoy();runHeld=false;});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();resetJoy();runHeld=false;}});
+let taka=0;
+const markerGroup=new THREE.Group();
+const markerRing=new THREE.Mesh(new THREE.TorusGeometry(.94,.095,10,26),new THREE.MeshBasicMaterial({color:0xffce61}));
+markerRing.rotation.x=-Math.PI/2;markerGroup.add(markerRing);
+const markerDiamond=new THREE.Mesh(new THREE.OctahedronGeometry(.33),new THREE.MeshStandardMaterial({color:0xf8d56a,emissive:0x6a3800,emissiveIntensity:.55}));
+markerDiamond.position.y=1.65;markerGroup.add(markerDiamond);scene.add(markerGroup);
+const missionSatchel=new THREE.Group();
+const satchelBody=new THREE.Mesh(new THREE.BoxGeometry(.48,.32,.14),new THREE.MeshStandardMaterial({color:0x80603e,roughness:.88}));
+satchelBody.position.y=.24;missionSatchel.add(satchelBody);
+const strap=new THREE.Mesh(new THREE.TorusGeometry(.24,.034,7,16,Math.PI),new THREE.MeshStandardMaterial({color:0x3f2e1a,roughness:.98}));
+strap.position.y=.42;missionSatchel.add(strap);
+missionSatchel.position.set(12,.03,-58);scene.add(missionSatchel);
+const nearMission=()=>mission<MISSIONS.length&&!player.riding&&Math.hypot(player.x-MISSIONS[mission].x,player.z-MISSIONS[mission].z)<7;
+function advanceQuest(){
+  if(!nearMission())return false;
+  const task=MISSIONS[mission];mission++;taka+=task.reward||0;
+  toast(task.message+' · +৳'+task.reward);
+  $('money').textContent='৳ '+taka.toLocaleString('en-US');
+  if(mission<MISSIONS.length){
+    $('mission').innerHTML='গ্রামের সমস্যা: <b>'+mission+'/৩ শেষ</b>';
+    $('objective').textContent='📍 '+MISSIONS[mission].name;
+  }else{
+    $('mission').innerHTML='🎉 <b>গ্রামের সমস্যা সমাধান হয়েছে!</b>';
+    $('objective').textContent='🏆 মিশন সম্পূর্ণ · ৳'+taka;
+  }
+  missionSatchel.visible=mission===1;
+  return true;
+}
 function act(){
-  if(player.riding){player.riding=false;player.speed=0;carPark.x=player.x+Math.cos(player.angle)*3.8;carPark.z=player.z-Math.sin(player.angle)*3.8;toast('🛺 CNG থেকে নেমেছ');return;}
-  if(Math.hypot(player.x-carPark.x,player.z-carPark.z)<6){player.riding=true;toast('🛺 CNG চালাতে joystick ব্যবহার করো');}
-  else toast('CNG-এর কাছে গিয়ে ওঠো');
+  if(advanceQuest())return;
+  if(player.riding){
+    player.riding=false;player.speed=0;
+    carPark.x=player.x+Math.cos(player.angle)*3.8;
+    carPark.z=player.z-Math.sin(player.angle)*3.8;
+    toast('🛺 CNG থেকে নেমেছ');return;
+  }
+  if(Math.hypot(player.x-carPark.x,player.z-carPark.z)<6){
+    player.riding=true;toast('🛺 CNG চালাতে joystick ব্যবহার করো');
+  }else toast(mission<MISSIONS.length?'📍 মিশনের হলুদ চিহ্নের কাছে যাও':'CNG-এর কাছে গিয়ে ওঠো');
 }
 interact.addEventListener('click',act);
-$('start').addEventListener('click',()=>{playing=true;$('splash').classList.add('hidden');toast('🇧🇩 স্বাগতম! গ্রামের বাড়ির দিকে যাও');});
+$('start').addEventListener('click',()=>{playing=true;$('splash').classList.add('hidden');toast('🇧🇩 গ্রামের সমস্যা: মেম্বারের সঙ্গে কথা বলো');});
 if(new URLSearchParams(location.search).has('autoplay'))$('start').click();
 
 let q=mobile?'low':'high',dpr=1;
@@ -337,9 +372,6 @@ function update(dt){
     player.angle=Math.atan2(-dx,-dz);
     player.speed=targetSpeed;
   } else player.speed*=.75;
-  if(playing&&!player.riding&&mission<MISSIONS.length){
-    const m=MISSIONS[mission];if(Math.hypot(player.x-m.x,player.z-m.z)<6.4){mission++;toast(m.message);if(mission<MISSIONS.length){$('mission').innerHTML=`মিশন: <b>${mission}/৩ শেষ</b>`;$('objective').textContent=`📍 গন্তব্য: ${MISSIONS[mission].name}`;}else{$('mission').innerHTML='🎉 <b>সব ৩টি মিশন সম্পন্ন!</b>';$('objective').textContent='🏆 তুমি গ্রামবাংলা এক্সপ্লোরার';}}
-  }
   person.root.visible=!player.riding&&!heroModel;
   if(heroModel){
     heroModel.visible=!player.riding;
@@ -355,8 +387,12 @@ function update(dt){
   carRoot.position.set(player.riding?player.x:carPark.x,0,player.riding?player.z:carPark.z);
   carRoot.rotation.y=player.riding?player.angle:0;
   const near=Math.hypot(player.x-carPark.x,player.z-carPark.z)<6;
-  interact.disabled=!player.riding&&!near;
-  interact.innerHTML=player.riding?'<b>🚶</b>নামো':'<b>🛺</b>উঠো';
+  const targetNear=playing&&nearMission();
+  interact.disabled=!playing||(!player.riding&&!near&&!targetNear);
+  interact.innerHTML=player.riding?'<b>🚶</b>নামো':targetNear?'<b>✋</b>'+MISSIONS[mission].action:'<b>🛺</b>উঠো';
+  markerGroup.visible=playing&&mission<MISSIONS.length;
+  if(markerGroup.visible){const target=MISSIONS[mission];markerGroup.position.set(target.x,.04+Math.sin(elapsed*2)*.025,target.z);markerDiamond.rotation.y+=dt*.7;}
+  missionSatchel.visible=playing&&mission===1;
   $('speed').textContent=(player.riding?'🛺 CNG':'🚶 হাঁটা')+` · ${Math.round(player.speed*3.6)} km/h`;
   const distance=(camView===1?11.2:camView===2?4.6:player.riding?8.8:6.8),height=player.riding?2:1.4;
   temp.set(player.x+Math.sin(camYaw)*distance*Math.cos(camPitch),height+distance*Math.sin(camPitch),player.z+Math.cos(camYaw)*distance*Math.cos(camPitch));
