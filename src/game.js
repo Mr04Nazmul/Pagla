@@ -74,11 +74,52 @@ function ground(){
   }
 }
 function cube(parent,w,h,d,material,x=0,y=0,z=0){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);parent.add(m);return m;}
+// Natural clustered foliage. Shared geometry + instancing keeps draw calls low
+// even on iPhone Safari; no more single faceted football-shaped tree crowns.
+const forestTrunks=new THREE.InstancedMesh(
+  new THREE.CylinderGeometry(.68,1,1,9,1),
+  new THREE.MeshStandardMaterial({color:0x69503d,roughness:1}),140);
+const forestCanopy=new THREE.InstancedMesh(
+  new THREE.SphereGeometry(1,9,7),
+  new THREE.MeshStandardMaterial({color:0xffffff,roughness:.99,side:THREE.DoubleSide}),1250);
+const forestBranches=new THREE.InstancedMesh(
+  new THREE.CylinderGeometry(.42,.7,1,6,1),
+  new THREE.MeshStandardMaterial({color:0x62503b,roughness:.98}),330);
+const forestDummy=new THREE.Object3D(), forestColor=new THREE.Color();
+let trunkNum=0,leafNum=0,branchNum=0;
+forestTrunks.frustumCulled=forestCanopy.frustumCulled=forestBranches.frustumCulled=false;
+scene.add(forestTrunks,forestCanopy,forestBranches);
 function foliageBillboard(x,z,height=9){
-  // Background trees are intentionally lighter than foreground GLBs.
-  const g=new THREE.Group();g.position.set(x,0,z);
-  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.2,.38,height*.65,6),timber);trunk.position.y=height*.33;g.add(trunk);
-  const can=new THREE.Mesh(new THREE.IcosahedronGeometry(height*.31,1),rand()>.5?green:mat('forest',0x346e3a));can.position.y=height*.77;can.scale.set(1.25,.66,1);g.add(can);scene.add(g);
+  if(trunkNum>=forestTrunks.instanceMatrix.count||leafNum>forestCanopy.instanceMatrix.count-12)return;
+  const baseHeight=height*.73;
+  forestDummy.position.set(x,baseHeight*.5,z);
+  forestDummy.rotation.set(0,rnd(0,Math.PI*2),0);
+  forestDummy.scale.set(height*.045,baseHeight,height*.045);
+  forestDummy.updateMatrix();forestTrunks.setMatrixAt(trunkNum++,forestDummy.matrix);
+  for(let j=0;j<3&&branchNum<forestBranches.instanceMatrix.count;j++){
+    const ang=(j/3)*Math.PI*2+rnd(-.35,.35);
+    forestDummy.position.set(x+Math.cos(ang)*height*.13,height*.62,z+Math.sin(ang)*height*.13);
+    forestDummy.rotation.set(Math.sin(ang)*.62,0,Math.cos(ang)*.6);
+    forestDummy.scale.set(height*.02,height*.46,height*.02);
+    forestDummy.updateMatrix();forestBranches.setMatrixAt(branchNum++,forestDummy.matrix);
+  }
+  for(let j=0;j<9&&leafNum<forestCanopy.instanceMatrix.count;j++){
+    const a=j*Math.PI*2/9+rnd(-.4,.4),r=(j%3===0?.25:.34)*height;
+    const dx=Math.cos(a)*r,dz=Math.sin(a)*r;
+    forestDummy.position.set(x+dx,height*(.70+rnd(-.02,.15)),z+dz);
+    forestDummy.rotation.set(rnd(-.3,.3),rnd(0,6.28),rnd(-.3,.3));
+    forestDummy.scale.set(height*rnd(.17,.26),height*rnd(.17,.23),height*rnd(.17,.27));
+    forestDummy.updateMatrix();forestCanopy.setMatrixAt(leafNum,forestDummy.matrix);
+    forestColor.setHSL(.275+rnd(-.03,.03),.37+rnd(-.1,.1),.20+rnd(-.035,.07));
+    forestCanopy.setColorAt(leafNum++,forestColor);
+  }
+}
+function finishForest(){
+  forestTrunks.count=trunkNum;forestCanopy.count=leafNum;forestBranches.count=branchNum;
+  forestTrunks.instanceMatrix.needsUpdate=true;
+  forestCanopy.instanceMatrix.needsUpdate=true;
+  forestBranches.instanceMatrix.needsUpdate=true;
+  if(forestCanopy.instanceColor)forestCanopy.instanceColor.needsUpdate=true;
 }
 function tinHouse(x,z,scale=1,yaw=0){
   const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=yaw;g.scale.setScalar(scale);scene.add(g);
@@ -177,6 +218,7 @@ function setupVillage(){
     power.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),cableMaterial));
   }
   createRice();
+  finishForest();
 }
 setupVillage();
 const villageDetails=decorateVillage(scene,{mobile});
