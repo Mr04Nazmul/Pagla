@@ -118,6 +118,32 @@ for(let i=0;i<15;i++){
 }
 house(14,-22,7,6);
 house(-19,-84,8.5,7);
+
+// PAGLA_V4_ASSETS: small Bangladeshi rural-life props, deliberately lightweight.
+// Raised courtyard, jute sacks, clay pots, and bamboo wash-line near houses.
+const clay=mat(0x9b684c,.94),jute=mat(0x998465,.98),straw=mat(0xb6a366,.96);
+for(const [x,z] of [[14,-22],[-19,-84],[roadX(43)+13,43]]){
+ box(scene,x,.07,z+6,6,.15,3,earth);
+ for(let i=0;i<3;i++){
+  add(new THREE.CylinderGeometry(.24,.31,.52,11),clay,scene,x-2+i*.63,.34,z+5.3);
+ }
+ for(let i=0;i<2;i++){
+  box(scene,x+1.5+i*.64,.31,z+5.8,.48,.56,.76,jute);
+ }
+}
+for(let j=0;j<9;j++){ // a few bundled straw stacks by paddies
+ let z=-95+j*22,x=roadX(z)+(j%2?11:-14);
+ if(Math.abs(z+39)<15)continue;
+ const hay=add(new THREE.CylinderGeometry(.58,.62,.8,10),straw,scene,x,.4,z);
+ hay.rotation.z=.08;
+}
+// Spaced path stones beside houses and market.
+for(let i=0;i<43;i++){
+ let z=-100+i*4.8,x=roadX(z)+(i%2===0?4.5:-4.6);
+ let stone=add(new THREE.DodecahedronGeometry(rand(.16,.38),0),mat(0x8e8572),scene,x,.04,z);
+ stone.scale.y=.23;
+}
+
 // Tea stall roof and benches at bazaar.
 box(scene,-15,3.0,-78,8,.18,6,tin);
 for(const dx of [-3.8,3.8])for(const dz of [-2.7,2.7])box(scene,-15+dx,1.52,-78+dz,.15,3,.15,treeTrunk);
@@ -219,6 +245,12 @@ function drawMap(){
  c.save();c.translate(sz/2,sz/2);c.rotate(-state.heading);c.fillStyle='#fff';c.beginPath();c.moveTo(0,-10);c.lineTo(-6,8);c.lineTo(6,8);c.fill();c.restore();
 }
 let frames=0,prev=performance.now();const focus=new THREE.Vector3(),desired=new THREE.Vector3();
+// Mobile battery/thermal guard: reduce costly resolution if FPS stays low.
+let qualityScale=Math.min(devicePixelRatio||1,mobile?1.35:1.8);
+let frameBudgetSeconds=0,frameBudgetCount=0;
+let importedAvatar=null;
+document.addEventListener('visibilitychange',()=>{prev=performance.now();});
+
 function step(dt,now){
  if(!state.playing)return;
  let dx=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0)+stick.x;
@@ -235,6 +267,7 @@ function step(dt,now){
  if(!state.riding){
   player.position.set(state.x,Math.sin(now*.006)*.015*(state.moving?1:0),state.z);
   player.rotation.y=state.heading;
+  if(importedAvatar){importedAvatar.position.y=state.moving?Math.abs(Math.sin(now*.009))*.045:0;importedAvatar.rotation.y=Math.PI+(state.moving?Math.sin(now*.009)*.018:0);}
   for(let i=0;i<2;i++){const swing=state.moving?Math.sin(now*.009+i*Math.PI)*.42:0;legs[i].rotation.x=swing;arms[i].rotation.x=-swing*.7;}
  }else {vehicle.x=state.x;vehicle.z=state.z;vehicle.heading=state.heading;}
  driveGroup.position.set(vehicle.x,0,vehicle.z);driveGroup.rotation.y=vehicle.heading;
@@ -255,6 +288,7 @@ function resize(){
  }
 }
 function render(now){
+ if(document.hidden){prev=now;requestAnimationFrame(render);return;}
  const dt=Math.min(.05,(now-prev)/1000||.016);prev=now;resize();step(dt,now);
  focus.set(state.x,1.3,state.z);
  const dist=state.riding?10:6.5;
@@ -263,6 +297,16 @@ function render(now){
  camera.position.lerp(desired,Math.min(1,dt*4.5));camera.lookAt(focus);
  renderer.render(scene,camera);
  if(++frames%10===0)drawMap();
+ if(mobile && state.playing){
+  frameBudgetSeconds+=dt;frameBudgetCount++;
+  if(frameBudgetCount>=150){
+   const avg=frameBudgetSeconds/frameBudgetCount;
+   if(avg>.034 && qualityScale>0.82)qualityScale=Math.max(.82,qualityScale-.12);
+   else if(avg<.021 && qualityScale<1.34)qualityScale=Math.min(1.34,qualityScale+.06);
+   renderer.setPixelRatio(qualityScale);
+   frameBudgetSeconds=0;frameBudgetCount=0;
+  }
+ }
  requestAnimationFrame(render);
 }
 // Optional imported GLBs. Engine and gameplay keep running if CDN or model fails.
@@ -274,18 +318,36 @@ const assetList=[
  {id:'cng',url:'https://cdn.3dassets.dev/assets/36560/v1/model.glb',vehicle:true},
  {id:'bike',url:'https://cdn.3dassets.dev/assets/36564/v1/model.glb',locs:[[roadX(-56)+6,-56]]},
  {id:'cycle',url:'https://cdn.3dassets.dev/assets/36561/v1/model.glb',locs:[[-20,-75]]},
- {id:'produce',url:'https://cdn.3dassets.dev/assets/36547/v1/model.glb',locs:[[-20,-73]]}
+ {id:'produce',url:'https://cdn.3dassets.dev/assets/36547/v1/model.glb',locs:[[-20,-73]]},
+ // New: small CC0 real GLB models. Props stay sparse on mobile to preserve FPS.
+ {id:'rice',url:'https://cdn.3dassets.dev/assets/19389/v1/model.glb',locs:[[11,-9],[12,-10],[13,-11],[15,-10],[16,-9],[-12,-30],[-14,-31],[-16,-30],[17,39],[18,40],[19,41],[-15,40],[-17,41],[-19,42]]},
+ {id:'cow',url:'https://cdn.3dassets.dev/assets/5009/v1/model.glb',locs:[[roadX(31)+11,31],[-21,-28]]},
+ {id:'civilian',url:'https://cdn.3dassets.dev/assets/36337/v1/model.glb',locs:[[roadX(-18)+5,-18],[-13,-74],[roadX(47)-8,47]]},
+ {id:'villagerWoman',url:'https://cdn.3dassets.dev/assets/36379/v1/model.glb',locs:[[roadX(-40)-6,-40],[-18,-73],[roadX(30)+8,30]]},
+ {id:'villagerMan',url:'https://cdn.3dassets.dev/assets/36378/v1/model.glb',locs:[[roadX(-68)+6,-68],[-20,-80]]},
+ {id:'palm',url:'https://cdn.3dassets.dev/assets/28704/v1/model.glb',locs:[[roadX(-12)-13,-12],[38,-43],[-41,51],[-33,-100]]},
+ {id:'avatar',url:'https://cdn.3dassets.dev/assets/36337/v1/model.glb',avatar:true}
 ];
 let loaded=0,failed=0;
 const status=$('#assets');
 assetList.forEach(a=>{
  loader.load(a.url,gltf=>{
   if(a.vehicle){
+   // The real vehicle is mounted on the drive group, so steering still works.
    fallbackCar.visible=false;
    driveGroup.add(gltf.scene);
+  }else if(a.avatar){
+   // Replace the old block character but preserve it as a safety fallback.
+   importedAvatar=gltf.scene;
+   for(const child of [...player.children])child.visible=false;
+   importedAvatar.rotation.y=Math.PI;
+   player.add(importedAvatar);
   }else{
    for(const [x,z] of a.locs){
-    const clone=gltf.scene.clone(true);clone.position.set(x,0,z);clone.rotation.y=rand(0,Math.PI*2);
+    const clone=gltf.scene.clone(true);
+    clone.position.set(x,0,z);
+    clone.rotation.y=rand(0,Math.PI*2);
+    clone.traverse(child=>{if(child.isMesh){child.castShadow=!mobile;child.receiveShadow=true;}});
     scene.add(clone);
    }
   }
