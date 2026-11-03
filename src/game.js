@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { installVillageUpgrade } from '../village-upgrade.js?v=20261103r5';
 import { ASSETS, MISSIONS } from './asset-manifest.js?v=20261103r4';
 import { installRealism } from './realism.js?v=20261103r4';
 import { createCharacterMotion } from './character-motion.js?v=20261103r4';
@@ -284,6 +285,8 @@ cube(motoFallback,.7,.43,1.25,mat('motorbody',0x275e53),0,.78,0);cube(motoFallba
 for(const z of [-.66,.7]){const wh=new THREE.Mesh(new THREE.TorusGeometry(.32,.07,7,12),dark);wh.position.set(0,.39,z);wh.rotation.y=Math.PI/2;motoFallback.add(wh);}
 
 const loader=new GLTFLoader();
+// Optional lightweight village structures and crowd details; gameplay remains independent.
+const villageExtras=installVillageUpgrade({scene,loader,mobile,roadX,roofMat:tin,onStatus:message=>{const node=$('upgrade');if(node)node.textContent=message;}});
 const assetsLoaded=new Set(),assetsFailed=new Set(),assetRoots={};
 let pending=Object.keys(ASSETS).length;
 function progress(){
@@ -516,7 +519,7 @@ function minimap(){
 }
 function frame(now){
   const dt=Math.min(.05,Math.max(.002,(now-last)/1000));last=now;
-  update(dt);realism.update(camera);renderer.render(scene,camera);frameCounter++;
+  update(dt);villageExtras.update(dt,now);realism.update(camera);renderer.render(scene,camera);frameCounter++;
   if(frameCounter%12===0){minimap();fpsValue=Math.round(1/dt);$('fps').textContent=`${fpsValue} FPS · ${assetsLoaded.size} GLB models`;
     if(playing&&mobile&&q==='high'&&fpsValue<24){if(++lowFrames>8){q='low';quality();toast('⚡ FPS উন্নত করতে graphics কমানো হয়েছে');}} else lowFrames=Math.max(0,lowFrames-2);
   }
