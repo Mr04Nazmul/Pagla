@@ -59,11 +59,18 @@ export function createCharacterMotion(root, animations = []) {
   }
   function update(dt, speed, elapsed, riding = false) {
     const moving = !riding && speed > .3;
-    const use = moving ? (speed > 5.4 ? clipActions.run || clipActions.walk : clipActions.walk || clipActions.run) : null;
+    const use = moving
+      ? (speed > 5.4 ? clipActions.run || clipActions.walk : clipActions.walk || clipActions.run)
+      : (clipActions.idle || clipActions.walk || null);
     if (use) {
-      // Reset procedural changes before the mixer applies its complete pose.
+      // Even at zero movement speed the rig must never fall back to its T-pose.
+      // Hold a neutral frame of the real walk clip if the GLB has no idle clip.
       for (const bone of Object.values(bones)) if (bone && rest[bone.uuid]) bone.quaternion.copy(rest[bone.uuid]);
       transition(use);
+      if(!moving && use!==clipActions.idle){
+        use.setEffectiveTimeScale(0);
+        use.time=Math.min(.26,use.getClip().duration*.23);
+      }else use.setEffectiveTimeScale(1);
       mixer.update(dt);
       return;
     }
