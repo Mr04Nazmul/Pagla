@@ -1,3 +1,17 @@
+## Four-repository hybrid gameplay upgrade (3 November 2026)
+
+The active web game now adds a **rideable motorcycle** to its CNG. Both use Pagla's original acceleration, braking, reverse, turning and collision-stop routines (`src/vehicle-dynamics.js`). Walk to the motorcycle near the starting road and press **উঠো**, or press **F** on desktop. The mobile joystick steers and accelerates while riding. The original quest system is preserved.
+
+The **🌿 SPLAT: OFF/ON** control lazily imports Spark.js, generating an optional Gaussian-splat foliage layer over existing Three.js meshes (`src/four-repo-hybrid.js`). It defaults to OFF on all devices, particularly to protect iPhone RAM. Low-quality mode hides the layer. The base game continues without it if Spark.js or WebGL2 is unavailable. This is procedural foliage, **not a scanned Bangladeshi village**, and therefore cannot yet duplicate the reference screenshot.
+
+Four source projects reviewed:
+- [Spark.js](https://github.com/sparkjsdev/spark), MIT: actual optional SparkRenderer and procedural SplatMesh runtime integration.
+- [Worldsplats](https://github.com/philchacko/worldsplats), MIT: hybrid splat and mesh rendering + mobile-first progressive toggling approaches, independently implemented.
+- [Simple 3D Open World](https://github.com/yusufmalikul/simple-3d-open-world), MIT: seeded, instanced procedural scenery and touch-friendly performance patterns, independently implemented.
+- [Mini GTA 6](https://github.com/imNauman/mini-gta6), **no license confirmed**: high-level vehicle and open-world design patterns only. No unlicensed source files were copied.
+
+**Verification limitations:** GitHub source updates are not the same as successful real-iPhone rendering. Mobile graphics, streamed GLB availability, CDN imports, and framerate still require device-level testing. The game is a real playable web prototype, but not the user's reference image recreated in photoreal 3D.
+
 # Pagla — গ্রামবাংলার 3D অভিযান 🇧🇩
 
 A **playable mobile-first 3D village exploration game** that works in iPhone Safari and Android Chrome with WebGL. This repository serves a static game via GitHub Pages: https://mr04nazmul.github.io/Pagla/
