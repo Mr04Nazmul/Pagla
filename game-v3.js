@@ -59,7 +59,7 @@ const pathGeo=new THREE.BufferGeometry();
 {let p=[],uv=[],idx=[];const steps=220;
  for(let i=0;i<=steps;i++){const z=-110+i,x=roadX(z);
   for(let s of [-1,1]){p.push(x+s*3.4,.008,z);uv.push(s===-1?0:1,i*.03);}
-  if(i){const a=(i-1)*2,b=i*2;idx.push(a,a+1,b,b,a+1,b+1);}
+  if(i){const a=(i-1)*2,b=i*2;idx.push(a,b,a+1,b,b+1,a+1);}
  }
  pathGeo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
  pathGeo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));pathGeo.setIndex(idx);pathGeo.computeVertexNormals();
