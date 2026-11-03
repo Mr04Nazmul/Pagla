@@ -20,6 +20,8 @@ export const ASSETS = Object.freeze({
   waterTrough: {url: root+'29217/v1/model.glb', size: 373, metres: [1.8,.7,.8]},
   milkChurns: {url: root+'29219/v1/model.glb', size: 221, metres: [1.2,.7,.7]},
   wheelbarrow: {url: root+'29218/v1/model.glb', size: 445, metres: [1.8,.8,1.0]},
+  coconutPalm: {url: root+'6797/v1/model.glb', size: 214, metres: [5.3,9,5.2]},
+  tropicalCanopy: {url: root+'6818/v1/model.glb', size: 168, metres: [8.607,11.291,8.499]},
 });
 // Mission interaction points are outside blocked buildings and pond water.
 export const MISSIONS = [
