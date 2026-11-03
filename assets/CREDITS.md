@@ -19,3 +19,22 @@ The game downloads these **real GLB files** from `cdn.3dassets.dev` at runtime t
 **Libraries:** Three.js is MIT licensed. Version is pinned in the HTML import map; see https://github.com/mrdoob/three.js/blob/master/LICENSE .
 
 **Hosting/runtime limitation:** The game relies on network access to `cdn.jsdelivr.net` for Three.js and `cdn.3dassets.dev` for models. If models fail to load, core game still runs with generic fallback environment and vehicles. If the Three.js import itself is blocked, the player can use `legacy.html` instead. Performance is device-dependent.
+
+
+## Cinematic web realism sources (2026-11-03)
+
+The Three.js cinematic renderer optionally streams **CC0 photographed PBR textures** from Poly Haven. If these files are inaccessible on a device or blocked by cross-origin policies, the game uses generated local fallback maps and remains playable.
+
+| Asset | Publisher / page | In-game use | Published license |
+|---|---|---|---|
+| Red Dirt Mud 01 | https://polyhaven.com/a/red_dirt_mud_01 | Mud road albedo, GL normal map and roughness | CC0 |
+| Brick Wall 001 | https://polyhaven.com/a/brick_wall_001 | Village brick materials | CC0 |
+
+The main player character is an optional **rigged GLB with Walk and Run clips**, publicly marked CC0 by its uploader:
+- Title: *Rigged male camper in plaid flannel shirt (Meshy)*
+- Source & author attribution information: https://vibeassets.io/a/zpepqtthci
+- Optional runtime URL: https://vibeassets.io/download/zpepqtthci?combined=1
+- Published license: CC0; 2.9 MB listing. Browser CORS and animation integration still require device-level visual testing.
+- Falls back to Pagla's own procedural articulated player if it cannot load.
+
+**Original procedural enhancements:** atmospheric sky shader by Three.js Sky (MIT), rust/corrugated tin maps, grass, pebbles and irregular puddles are authored in Pagla's JavaScript, not extracted from screenshots. Poly Haven is not used through its API: only optional static CC0 file URLs are referenced.
