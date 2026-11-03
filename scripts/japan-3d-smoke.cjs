@@ -1,9 +1,11 @@
-const { chromium } = require('playwright');
+const { chromium, webkit } = require('playwright');
 const fs = require('fs');
 const assert = require('assert');
 (async () => {
   fs.mkdirSync('test-artifacts', {recursive: true});
-  const browser = await chromium.launch({
+  const browserName = process.env.PAGLA_BROWSER === 'webkit' ? 'webkit' : 'chromium';
+  const type = browserName === 'webkit' ? webkit : chromium;
+  const browser = await type.launch(browserName === 'webkit' ? { headless: true } : {
     headless: true,
     args: ['--enable-webgl','--ignore-gpu-blocklist','--use-gl=angle','--use-angle=swiftshader']
   });
@@ -17,7 +19,7 @@ const assert = require('assert');
   page.on('pageerror', e => fatal.push(e.message));
   try {
     await page.goto('http://127.0.0.1:8765/japan/', {waitUntil:'domcontentloaded',timeout:45000});
-    await page.locator('#begin').click();
+    // There must be no start button or splash: the real map opens on initial navigation.
     await page.waitForTimeout(12000);
     const result = await page.evaluate(() => {
       const canvas=document.querySelector('.maplibregl-canvas');
@@ -29,22 +31,22 @@ const assert = require('assert');
         exportEnabled:!document.getElementById('export')?.disabled,
         failVisible:getComputedStyle(fail).display!=='none',
         aerialButton:!!document.getElementById('aerial'),
-        introHidden:document.getElementById('overlay')?.classList.contains('hide')
+        introGone: !document.getElementById('overlay') && !document.getElementById('begin')
       };
     });
-    await page.screenshot({path:'test-artifacts/kobe-futabacho-mobile.png'});
-    fs.writeFileSync('test-artifacts/report.json',JSON.stringify({result,errors:fatal},null,2));
+    await page.screenshot({path:`test-artifacts/kobe-futabacho-${browserName}-mobile.png`});
+    fs.writeFileSync(`test-artifacts/report-${browserName}.json`,JSON.stringify({result,errors:fatal,browserName},null,2));
     console.log(JSON.stringify({result,errors:fatal},null,2));
     assert.ok(result.canvas && result.canvas[0] > 0,'MapLibre canvas did not initialize');
     assert.ok(!result.failVisible,'Error overlay visible');
-    assert.ok(result.introHidden,'Start button did not work');
+    assert.ok(result.introGone,'Unexpected blocking start overlay still exists');
     assert.ok(result.aerialButton,'Aerial photo toggle missing');
     assert.ok(!fatal.length,'Uncaught JavaScript exceptions: '+fatal.join(' | '));
     if(result.exportEnabled){
       const pending=page.waitForEvent('download',{timeout:60000});
       await page.locator('#export').click();
       const file=await pending;
-      const destination='test-artifacts/Kobe_Futabacho_OSM_3D.glb';
+      const destination=`test-artifacts/Kobe_Futabacho_OSM_3D_${browserName}.glb`;
       await file.saveAs(destination);
       const buf=fs.readFileSync(destination);
       assert.strictEqual(buf.subarray(0,4).toString('ascii'),'glTF','Downloaded file is not a binary GLB');
