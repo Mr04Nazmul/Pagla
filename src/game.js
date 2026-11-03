@@ -483,6 +483,7 @@ function update(dt){
     const gait=Math.min(.62,player.speed*.095);
     person.limbs.forEach(({arm,leg},i)=>{const stride=Math.sin(elapsed*8.5+i*Math.PI)*gait;arm.rotation.x=-stride*.85;leg.rotation.x=stride;});
   }
+  villageDetails.update(player.x,player.z);
   playerGroundShadow.position.set(player.x,.08,player.z);
   playerGroundShadow.visible=!player.riding;
   carRoot.position.set(player.riding?player.x:carPark.x,0,player.riding?player.z:carPark.z);
