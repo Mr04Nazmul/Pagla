@@ -248,6 +248,35 @@ for(const [key,entry] of Object.entries(ASSETS)){
 }
 progress();
 
+// Higher-detail CC0 skinned hero with plaid shirt + Walk / Run animations.
+// Remote download may fail (network/CORS); the original animated mesh
+// remains a playable fallback, so character loading is never blocking.
+let heroModel=null,heroMixer=null,heroCurrent=null,heroYOffset=0;
+const heroClips={};
+loader.load('https://vibeassets.io/download/zpepqtthci?combined=1',gltf=>{
+  const mesh=gltf.scene;
+  const bounds=new THREE.Box3().setFromObject(mesh);
+  const dimensions=bounds.getSize(new THREE.Vector3());
+  const targetHeight=1.83;
+  mesh.scale.setScalar(Math.min(8,Math.max(.08,targetHeight/Math.max(.02,dimensions.y))));
+  bounds.setFromObject(mesh);
+  heroYOffset=-bounds.min.y;
+  mesh.traverse(child=>{
+    if(child.isMesh){child.castShadow=!mobile;child.receiveShadow=true;}
+  });
+  mesh.position.set(player.x,heroYOffset,player.z);
+  heroMixer=new THREE.AnimationMixer(mesh);
+  for(const clip of gltf.animations||[]){
+    const action=heroMixer.clipAction(clip);
+    const name=clip.name.toLowerCase();
+    if(name.includes('walk'))heroClips.walk=action;
+    if(name.includes('run'))heroClips.run=action;
+    if(name.includes('idle'))heroClips.idle=action;
+  }
+  scene.add(mesh);heroModel=mesh;
+  $('status').textContent='3D hero + '+assetsLoaded.size+' props';
+},undefined,error=>{console.warn('Photoreal character CDN unavailable; using playable fallback',error);});
+
 const joystick=$('joystick'),stick=$('stick'),run=$('run'),interact=$('interact');
 let joyPointer=null,mousePointer=null,runHeld=false,camYaw=.22,camPitch=.22,playing=false,mission=0,camView=0,toastTimer;
 const input={x:0,y:0},keys=new Set();
@@ -302,7 +331,20 @@ function update(dt){
   if(playing&&!player.riding&&mission<MISSIONS.length){
     const m=MISSIONS[mission];if(Math.hypot(player.x-m.x,player.z-m.z)<6.4){mission++;toast(m.message);if(mission<MISSIONS.length){$('mission').innerHTML=`মিশন: <b>${mission}/৩ শেষ</b>`;$('objective').textContent=`📍 গন্তব্য: ${MISSIONS[mission].name}`;}else{$('mission').innerHTML='🎉 <b>সব ৩টি মিশন সম্পন্ন!</b>';$('objective').textContent='🏆 তুমি গ্রামবাংলা এক্সপ্লোরার';}}
   }
-  person.root.visible=!player.riding;
+  person.root.visible=!player.riding&&!heroModel;
+  if(heroModel){
+    heroModel.visible=!player.riding;
+    heroModel.position.set(player.x,heroYOffset,player.z);
+    heroModel.rotation.y=player.angle;
+    const action=player.riding||player.speed<.15?(heroClips.idle||null):
+      (player.speed>5.4&&heroClips.run?heroClips.run:(heroClips.walk||heroClips.run||null));
+    if(action!==heroCurrent){
+      if(heroCurrent)heroCurrent.fadeOut(.18);
+      if(action)action.reset().fadeIn(.18).play();
+      heroCurrent=action;
+    }
+    if(heroMixer)heroMixer.update(dt);
+  }
   if(!player.riding){
     person.root.position.set(player.x,Math.sin(elapsed*10)*Math.min(.024,player.speed*.004),player.z);person.root.rotation.y=player.angle;
     const gait=Math.min(.62,player.speed*.095);
