@@ -79,3 +79,17 @@ See [ASSETS.md](ASSETS.md) for all source asset URLs and CC0 licensing.
 The active web entrypoint now loads `src/cinematic-reference.js`. It adds an original detailed Bangladeshi tea stall with a Bengali sign, cups/kettle/benches, a denser instanced rice layer, bamboo fencing, lotus patches at the mission pond, and a roadside motorcycle. The motorcycle first attempts an optional realistic CC0 GLB (Innerscene) and falls back to original geometry if the remote host blocks it. This upgrade changes **interactive 3D geometry**, not just the splash image.
 
 Graphics toggle cycles `LOW → HIGH → CINEMATIC → LOW`. On mobile a slow frame rate triggers a step down to keep it playable. On modern iPhone/Android, users can choose cinematic, but performance and appearance are hardware dependent. The original generated reference picture is an *illustrative target*, not proof of achieved photorealism. This prototype still cannot reproduce the exact level of an offline AAA game screenshot, especially in Safari on phones. The real WebGL/GPU render must be device-tested.
+
+
+## Photo-reference visual scene (r7, 2026-11-03)
+
+This revision changes the actual playable WebGL scene, not the landing page's background image.
+
+- Starting composition: third-person player near a roadside motorbike, a right-hand Bengali tea stall and left-hand roadside canal/lilies.
+- Old solid spherical tree clusters are replaced by procedurally textured, leaf-shaped cross-card instanced foliage. The foliage is a mobile-friendly *approximation*, not photogrammetry.
+- `src/photo-materials.js` attempts 1K photographed CC0 Poly Haven PBR maps for leafy ground and corrugated galvanized/rusted sheet metal. Failed downloads preserve existing procedural surfaces; game controls are independent from model loading.
+- `src/natural-foliage.js` generates an original alpha-tested tree crown atlas, keeping relatively low geometry/draw cost.
+- Starts in `CINEMATIC` quality, with fallback to HIGH then LOW when phone framerate drops. Users can cycle settings.
+- Original missions, joystick, third-person movement, driving and existing optional 3D models are retained.
+
+**Important:** This is not identical to the earlier AI-generated promotional picture, and no screenshot/render or FPS on a physical iPhone was confirmed by this commit. The photorealism target requires further scanned foliage, environment models and rigorous mobile testing.
