@@ -21,8 +21,9 @@ export const ASSETS = Object.freeze({
   milkChurns: {url: root+'29219/v1/model.glb', size: 221, metres: [1.2,.7,.7]},
   wheelbarrow: {url: root+'29218/v1/model.glb', size: 445, metres: [1.8,.8,1.0]},
 });
+// Mission interaction points are outside blocked buildings and pond water.
 export const MISSIONS = [
-  {x:19,z:-25,name:'গ্রামের বাড়ি',message:'🏡 গ্রামের বাড়ি ঘুরে দেখা শেষ!'},
-  {x:24,z:-58,name:'পুকুরপাড়',message:'🪷 পুকুরপাড়ে পৌঁছেছ!'},
-  {x:-17,z:-91,name:'চায়ের দোকান',message:'☕ বাজারের চায়ের দোকানে পৌঁছেছ!'}
+  {x:12,z:-25,name:'মেম্বারের সঙ্গে কথা বলো',action:'কথা বলো',message:'মেম্বার: পুকুরপাড়ে একটি জরুরি কাগজ হারিয়ে গেছে। সেটি খুঁজে আনো।',reward:50},
+  {x:12,z:-58,name:'পুকুরপাড়ে হারানো কাগজ খুঁজে নাও',action:'কাগজ নাও',message:'📜 হারানো কাগজটি পাওয়া গেছে! এখন বাজারের চায়ের দোকানে পৌঁছে দাও।',reward:100},
+  {x:-10,z:-86,name:'চায়ের দোকানে কাগজ পৌঁছে দাও',action:'জমা দাও',message:'☕ দোকানি: ধন্যবাদ! গ্রামের কাজটি শেষ হয়েছে।',reward:250}
 ];
