@@ -34,6 +34,7 @@ export function installRealism({scene,renderer,sun,mobile,roadX,materials}){
   return result;
  }
  const mud=procedural('soil'),meadow=procedural('grass'),roof=procedural('roof'),brickTex=procedural('brick');
+ mud.repeat.set(1,1);
  dirtMat.map=mud;dirtMat.color.set(0xffffff);dirtMat.bumpMap=mud;dirtMat.bumpScale=.045;dirtMat.roughness=.9;dirtMat.needsUpdate=true;
  grassMat.map=meadow;grassMat.color.set(0xffffff);grassMat.bumpMap=meadow;grassMat.bumpScale=.02;grassMat.needsUpdate=true;
  for(const [material,rusty] of [[tin,false],[rust,true]]){
@@ -57,11 +58,11 @@ export function installRealism({scene,renderer,sun,mobile,roadX,materials}){
   loader.load(url,image=>{tex(image,rx,ry);if(!srgb)image.colorSpace=THREE.NoColorSpace;material[prop]=image;material.needsUpdate=true;},
    undefined,()=>{});
  }
- mapFrom(base+'red_dirt_mud_01/red_dirt_mud_01_diff_1k.jpg',dirtMat,'map',1,10);
- mapFrom(base+'red_dirt_mud_01/red_dirt_mud_01_nor_gl_1k.jpg',dirtMat,'normalMap',1,10,false);
- mapFrom(base+'red_dirt_mud_01/red_dirt_mud_01_rough_1k.jpg',dirtMat,'roughnessMap',1,10,false);
+ mapFrom(base+'red_dirt_mud_01/red_dirt_mud_01_diff_1k.jpg',dirtMat,'map',1,1);
+ mapFrom(base+'red_dirt_mud_01/red_dirt_mud_01_nor_gl_1k.jpg',dirtMat,'normalMap',1,1,false);
+ mapFrom(base+'red_dirt_mud_01/red_dirt_mud_01_rough_1k.jpg',dirtMat,'roughnessMap',1,1,false);
  dirtMat.normalScale=new THREE.Vector2(.38,.38);
- mapFrom(base+'brick_wall_001/brick_wall_001_diff_1k.jpg',brick,'map',1,1);
+ mapFrom(base+'brick_wall_001/brick_wall_001_diffuse_1k.jpg',brick,'map',1,1);
  // Atmospheric scattering sky, soft late-afternoon sun.
  const sky=new Sky();sky.scale.setScalar(245);sky.frustumCulled=false;sky.renderOrder=-1000;
  sky.material.uniforms.turbidity.value=9.5;
