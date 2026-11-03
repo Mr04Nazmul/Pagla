@@ -53,8 +53,22 @@ try {
       assert(state.mission.includes('গ্রামের সমস্যা'),'Quest HUD visible');
       assert(state.cash?.includes('৳'),'Mission currency HUD visible');
       assert.equal(errors.length,0,'No uncaught JavaScript errors');
+      assert(await page.locator('#splat').isVisible(),'Optional Gaussian-splat foliage toggle exists');
+      const before=await page.locator('#toggle').innerText();
       await page.locator('#toggle').click();
-      assert((await page.locator('#toggle').innerText()).includes('GRAPHICS:'),'Graphics quality toggles');
+      const after=await page.locator('#toggle').innerText();
+      assert.notEqual(after,before,'Graphics quality toggle updates its label');
+      assert(/CINEMATIC|HIGH|LOW/.test(after),'Graphics label shows active quality');
+      const physics=await page.evaluate(async()=>{
+        const {createVehicleDynamics}=await import('./src/vehicle-dynamics.js');
+        const car=createVehicleDynamics();
+        for(let i=0;i<60;i++)car.step(1/60,1,.3,'motorcycle');
+        const forward=car.getSpeed();
+        for(let i=0;i<180;i++)car.step(1/60,0,0,'motorcycle');
+        return {forward,coasting:car.getSpeed()};
+      });
+      assert(physics.forward>4,'Motorcycle accelerates under throttle');
+      assert(physics.coasting<physics.forward,'Motorcycle slows without throttle');
       ok++;
     } catch(e) {
       console.error('FAIL '+device.name,e);
