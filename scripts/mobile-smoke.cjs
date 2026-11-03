@@ -16,7 +16,8 @@ const fs = require('fs');
   try{
     await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded',timeout:45000});
     await page.waitForSelector('#start',{timeout:45000});
-    await page.waitForTimeout(1800);
+    // Wait until the Three.js module and render loop have really initialized.
+    await page.waitForFunction(()=>document.getElementById('fps')?.textContent.includes('FPS'),null,{timeout:60000});
     await page.locator('#start').click({timeout:25000});
     await page.waitForFunction(()=>document.getElementById('splash')?.classList.contains('hidden'),null,{timeout:25000});
     await page.waitForTimeout(5500);
