@@ -52,3 +52,14 @@ Source: [3DAssets.dev](https://3dassets.dev/docs). License of the five added GLB
 | Detailed cow (20.1k tris) | https://cdn.3dassets.dev/assets/29184/v1/model.glb | https://3dassets.dev/assets/farm-and-working-animals-hd-dairy-cow-holstein-00db2fd7 ; realistic but static |
 
 Other structures and four moving Bangladeshi-inspired villagers are original procedural geometry in [village-upgrade.js](village-upgrade.js), not third-party model downloads. Houses get original procedural weathered galvanized-tin textures. Mobile rendering keeps rice placement intentionally sparse. No promise of photorealism, native builds or guaranteed FPS on individual phones.
+
+## Reference-look r6 addition (2026-11-03)
+
+Original code in `src/cinematic-reference.js` adds a Bengali tea stall, roadside fencing, rice cards, lotus flowers and a detailed fallback motorbike. It optionally loads an independently verified CC0 motorcycle GLB from Innerscene:
+
+- Source model page: https://www.innerscene.com/tools/library/3d-parts/road-motorcycle-f2519759
+- Provider download: https://www.innerscene.com/api/library/road-motorcycle-f2519759/download
+- Redirected GLB: https://files.innerscene.com/library/road-motorcycle-f2519759/9dbc8024e2821e098070/motorcycle-original.glb
+- License: Public Domain / Creative Commons Zero (CC0); 627KB, real-world scale, static. Browser CORS support and actual mobile GPU appearance have **not** been certified; the game retains geometry fallback.
+
+The look is still a real-time WebGL approximation. Do not imply that low-poly rice textures or procedural houses are photogrammetry or that the reference illustration is a gameplay capture.
