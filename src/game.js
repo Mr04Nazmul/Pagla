@@ -236,6 +236,15 @@ function deployModel(key,root){
     case 'bicycle':copy(-12,-87,-.2,1);copy(27,23,1.3,1);break;
     case 'motorcycle':copy(6,18,.6,1);motoFallback.visible=false;break;
     case 'cng':cngRoot.add(root);fallbackCng.visible=false;break;
+    case 'cow': copy(11,-44,.75,.94);copy(-11,49,2.4,.86);break;
+    case 'jersey':copy(10,-73,1.7,.93);break;
+    case 'goat':copy(22,-16,.6,1);copy(-24,98,2.4,.86);break;
+    case 'shrubs': for(const [x,z,scale] of [[8,-14,1],[11,-42,1.18],[-10,-46,.9],[30,-67,1.13],[-27,-72,1.2],[12,-97,.88],[-15,20,1.02],[11,61,.93],[16,96,1.12]])copy(x,z,rnd(0,6.28),scale);break;
+    case 'palm':for(const [x,z,scale] of [[-31,-14,2.5],[38,-29,2.4],[-29,-71,3.2],[34,-106,3.6],[30,58,3],[-32,110,2.8]])copy(x,z,rnd(0,6.28),scale);break;
+    case 'hay':copy(31,-30,.5,.92);copy(-30,50,1.1,1);break;
+    case 'waterTrough':copy(13,-44,-.4,1);break;
+    case 'milkChurns':copy(-15.9,-94.4,-.5,1);break;
+    case 'wheelbarrow':copy(-13,-80,.3,1);break;
   }
 }
 for(const [key,entry] of Object.entries(ASSETS)){
