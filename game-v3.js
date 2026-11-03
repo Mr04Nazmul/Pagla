@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { installVillageUpgrade } from './village-upgrade.js';
 
 // Pagla — mobile-first Bangladesh village 3D playable prototype.
 // Assets: original CC0 1.0 models from 3dassets.dev (see ASSETS.md).
@@ -295,6 +296,7 @@ function render(now){
  desired.set(state.x+Math.sin(yaw)*dist*Math.cos(pitch),1.45+dist*Math.sin(pitch),state.z+Math.cos(yaw)*dist*Math.cos(pitch));
  if(camera.position.lengthSq()===0)camera.position.copy(desired);
  camera.position.lerp(desired,Math.min(1,dt*4.5));camera.lookAt(focus);
+ villageExtras.update(dt,now);
  renderer.render(scene,camera);
  if(++frames%10===0)drawMap();
  if(mobile && state.playing){
@@ -358,5 +360,6 @@ assetList.forEach(a=>{
  });
 });
 $('#assets').textContent='3D assets: loading…';
+const villageExtras=installVillageUpgrade({scene,loader,mobile,roadX,roofMat,onStatus:message=>{const e=$('#upgrade');if(e)e.textContent=message;}});
 camera.position.set(state.x+2,6,state.z+7);
 requestAnimationFrame(render);
