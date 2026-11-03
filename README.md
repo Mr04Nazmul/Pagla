@@ -2,6 +2,13 @@
 
 A **playable mobile-first 3D village exploration game** that works in iPhone Safari and Android Chrome with WebGL. This repository serves a static game via GitHub Pages: https://mr04nazmul.github.io/Pagla/
 
+
+## Cinematic web realism pass — November 3, 2026
+
+`src/realism.js` now adds a Three.js physically based outdoor rendering layer: photographed CC0 mud and brick textures (with procedural fallback), fine surface bump/normal response, weathered corrugated metal, atmospheric sunset sky, irregular wet road puddles, instanced roadside grass, and real-scale road gravel. The hero system attempts a 2.9 MB CC0 animated plaid-shirt character GLB (Walk/Run) and keeps the original character if that host is unavailable. See `assets/CREDITS.md` for source links.
+
+**Quality toggle:** Low graphics is the mobile-first default; High enables extra detail and shadow mapping, which may reduce frame rate on older phones. These are rendering upgrades, **not a GTA-quality photorealistic scene**. The low-poly houses, countryside trees, and simplified vehicle physics still need more accurate high-fidelity assets for a screenshot-level match. Third-party CDN downloads and GPU/FPS on real iPhone/Android hardware have not been confirmed.
+
 ## November 2026 Three.js / glTF upgrade
 
 - **Real `GLTFLoader` integration** for seven CC0 `.glb` models from 3DAssets.dev (banana, bamboo, tea stall, bicycle, motorcycle, CNG/auto-rickshaw, charpoy). Each is rendered in the world, with exact asset URLs, verified asset pages, and licence information in [`assets/CREDITS.md`](assets/CREDITS.md). The GLB files are streamed over an official CORS-enabled CDN, not checked into Git. Their embedded textures are used directly.
