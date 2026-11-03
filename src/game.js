@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { installVillageUpgrade } from '../village-upgrade.js?v=20261103r5';
-import { addCinematicVillage } from './cinematic-reference.js?v=20261103r6';
+import { addCinematicVillage } from './cinematic-reference.js?v=20261103r7';
+import { makeFoliageCrown } from './natural-foliage.js?v=20261103r7';
+import { addPhotographicMaterials } from './photo-materials.js?v=20261103r7';
 import { ASSETS, MISSIONS } from './asset-manifest.js?v=20261103r5';
 import { installRealism } from './realism.js?v=20261103r4';
 import { createCharacterMotion } from './character-motion.js?v=20261103r4';
@@ -82,9 +84,8 @@ function cube(parent,w,h,d,material,x=0,y=0,z=0){const m=new THREE.Mesh(new THRE
 const forestTrunks=new THREE.InstancedMesh(
   new THREE.CylinderGeometry(.68,1,1,9,1),
   new THREE.MeshStandardMaterial({color:0x69503d,roughness:1}),140);
-const forestCanopy=new THREE.InstancedMesh(
-  new THREE.SphereGeometry(1,9,7),
-  new THREE.MeshStandardMaterial({color:0xffffff,roughness:.99,side:THREE.DoubleSide}),1250);
+const naturalCrown=makeFoliageCrown();
+const forestCanopy=new THREE.InstancedMesh(naturalCrown.geometry,naturalCrown.material,1250);
 const forestBranches=new THREE.InstancedMesh(
   new THREE.CylinderGeometry(.42,.7,1,6,1),
   new THREE.MeshStandardMaterial({color:0x62503b,roughness:.98}),330);
@@ -289,6 +290,9 @@ const loader=new GLTFLoader();
 // Optional lightweight village structures and crowd details; gameplay remains independent.
 const villageExtras=installVillageUpgrade({scene,loader,mobile,roadX,roofMat:tin,onStatus:message=>{const node=$('upgrade');if(node)node.textContent=message;}});
 const referenceScenery=addCinematicVillage({scene,loader,roadX,mobile});
+const photoMaterials=addPhotographicMaterials({grassMat,dirtMat,tin,rust,renderer,onProgress:({loaded,failed,total})=>{
+  const target=$('photoStatus');if(target)target.textContent=`Real photo textures: ${loaded}/${total}${failed?' · '+failed+' fallback':''}`;
+}});
 const assetsLoaded=new Set(),assetsFailed=new Set(),assetRoots={};
 let pending=Object.keys(ASSETS).length;
 function progress(){
