@@ -38,3 +38,17 @@ Photorealistic rendering requires higher-grade licensed terrain/materials/archit
 ## Prior game
 
 The previous handcrafted WebGL prototype is still available as `v2.html` and `legacy.html` for comparison.
+
+## Rural village expansion assets (v4 module)
+
+Source: [3DAssets.dev](https://3dassets.dev/docs). License of the five added GLBs: **CC0 1.0 Universal** (publisher's asset pages; no attribution requirement). All assets below are optional network-loaded GLBs; their availability is reflected in the in-game environment asset counter.
+
+| Asset | Direct GLB | Source / visual caveat |
+|---|---|---|
+| Rice plant (mature, 2.3k tris) | https://cdn.3dassets.dev/assets/19389/v1/model.glb | https://3dassets.dev/assets/cozy-farm-and-homestead-rice-mature-28d8a6a5 ; small planted patches, low-poly |
+| Standing man (1.2k tris) | https://cdn.3dassets.dev/assets/36378/v1/model.glb | https://3dassets.dev/assets/low-poly-character-figures-villager-man-bfcdf400 ; static medieval-like tunic; placeholder |
+| Standing woman (1.2k tris) | https://cdn.3dassets.dev/assets/36379/v1/model.glb | https://3dassets.dev/assets/low-poly-character-figures-villager-woman-e985e516 ; static tunic figure; placeholder |
+| Corrugated roof workshop (692 tris) | https://cdn.3dassets.dev/assets/215/v1/model.glb | https://3dassets.dev/assets/reclamation-yard-open-salvage-workshop ; adapted as market-edge structure |
+| Detailed cow (20.1k tris) | https://cdn.3dassets.dev/assets/29184/v1/model.glb | https://3dassets.dev/assets/farm-and-working-animals-hd-dairy-cow-holstein-00db2fd7 ; realistic but static |
+
+Other structures and four moving Bangladeshi-inspired villagers are original procedural geometry in [village-upgrade.js](village-upgrade.js), not third-party model downloads. Houses get original procedural weathered galvanized-tin textures. Mobile rendering keeps rice placement intentionally sparse. No promise of photorealism, native builds or guaranteed FPS on individual phones.
