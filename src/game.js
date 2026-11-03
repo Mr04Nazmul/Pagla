@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { createVehicleDynamics } from './vehicle-dynamics.js?v=20261103combo2';
+import { createHybridWorld } from './four-repo-hybrid.js?v=20261103combo2';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { installVillageUpgrade } from '../village-upgrade.js?v=20261103r5';
 import { addCinematicVillage } from './cinematic-reference.js?v=20261103r7';
@@ -253,7 +255,8 @@ function makeAvatar(){
   return {root:g,limbs};
 }
 const person=makeAvatar();scene.add(person.root);
-const player={x:roadX(12),z:12,angle:0,speed:0,riding:false};
+const player={x:roadX(12),z:12,angle:0,speed:0,riding:false,vehicle:null};
+const driving=createVehicleDynamics();
 
 function blobShadow(radius=1.55){
   const cv=document.createElement('canvas');cv.width=cv.height=128;
@@ -282,7 +285,9 @@ cube(fallbackCng,1.6,.7,2.35,mat('cngbody',0x167158),0,.6,0);
 cube(fallbackCng,1.72,.2,2.2,dark,0,2.1,0);
 cube(fallbackCng,1.55,1.2,.07,mat('windscreen',0x91babc,.34,{transparent:true,opacity:.82}),0,1.4,1.12);
 for(let s of [-1,1]){const wh=new THREE.Mesh(new THREE.TorusGeometry(.32,.09,7,12),dark);wh.position.set(s*.78,.38,-.55);wh.rotation.y=Math.PI/2;fallbackCng.add(wh);}
-const motoFallback=new THREE.Group();scene.add(motoFallback);motoFallback.position.set(6,0,18);
+const bikePark={x:6,z:18};
+const bikeRoot=new THREE.Group();scene.add(bikeRoot);bikeRoot.position.set(bikePark.x,0,bikePark.z);
+const motoFallback=new THREE.Group();bikeRoot.add(motoFallback);motoFallback.position.set(0,0,0);
 cube(motoFallback,.7,.43,1.25,mat('motorbody',0x275e53),0,.78,0);cube(motoFallback,.66,.18,.76,dark,0,1.05,.24);
 for(const z of [-.66,.7]){const wh=new THREE.Mesh(new THREE.TorusGeometry(.32,.07,7,12),dark);wh.position.set(0,.39,z);wh.rotation.y=Math.PI/2;motoFallback.add(wh);}
 
@@ -290,6 +295,7 @@ const loader=new GLTFLoader();
 // Optional lightweight village structures and crowd details; gameplay remains independent.
 const villageExtras=installVillageUpgrade({scene,loader,mobile,roadX,roofMat:tin,onStatus:message=>{const node=$('upgrade');if(node)node.textContent=message;}});
 const referenceScenery=addCinematicVillage({scene,loader,roadX,mobile,roofTin:tin,roofRust:rust});
+const hybrid=createHybridWorld({scene,renderer,mobile,roadX,onStatus:msg=>{const el=$('splatStatus');if(el)el.textContent=msg;}});
 const photoMaterials=addPhotographicMaterials({grassMat,dirtMat,tin,rust,renderer,onProgress:({loaded,failed,total})=>{
   const target=$('photoStatus');if(target)target.textContent=`Real photo textures: ${loaded}/${total}${failed?' · '+failed+' fallback':''}`;
 }});
@@ -312,7 +318,7 @@ function deployModel(key,root){
     case 'tea':copy(-17.6,-92.1,Math.PI,1);break;
     case 'charpoy':copy(-22.5,-93,Math.PI/2,1);copy(-13.5,-93,Math.PI/2,1);break;
     case 'bicycle':copy(-12,-87,-.2,1);copy(27,23,1.3,1);break;
-    case 'motorcycle':copy(6,18,.6,1);motoFallback.visible=false;break;
+    case 'motorcycle':{const model=root.clone(true);model.rotation.y=.6;bikeRoot.add(model);motoFallback.visible=false;break;}
     case 'cng':cngRoot.add(root);fallbackCng.visible=false;break;
     case 'cow': copy(11,-44,.75,.94);copy(-11,49,2.4,.86);break;
     case 'jersey':copy(10,-73,1.7,.93);break;
@@ -444,14 +450,20 @@ function advanceQuest(){
 function act(){
   if(advanceQuest())return;
   if(player.riding){
-    player.riding=false;player.speed=0;
-    carPark.x=player.x+Math.cos(player.angle)*3.8;
-    carPark.z=player.z-Math.sin(player.angle)*3.8;
-    toast('🛺 CNG থেকে নেমেছ');return;
+    const old=player.vehicle;
+    player.riding=false;player.vehicle=null;player.speed=0;driving.reset();
+    const parking=old==='motorcycle'?bikePark:carPark;
+    parking.x=player.x+Math.cos(player.angle)*3.5;
+    parking.z=player.z-Math.sin(player.angle)*3.5;
+    toast(old==='motorcycle'?'🏍️ মোটরসাইকেল থেকে নেমেছ':'🛺 CNG থেকে নেমেছ');return;
   }
-  if(Math.hypot(player.x-carPark.x,player.z-carPark.z)<6){
-    player.riding=true;toast('🛺 CNG চালাতে joystick ব্যবহার করো');
-  }else toast(mission<MISSIONS.length?'📍 মিশনের হলুদ চিহ্নের কাছে যাও':'CNG-এর কাছে গিয়ে ওঠো');
+  const cngDistance=Math.hypot(player.x-carPark.x,player.z-carPark.z);
+  const bikeDistance=Math.hypot(player.x-bikePark.x,player.z-bikePark.z);
+  if(Math.min(cngDistance,bikeDistance)<6){
+    player.vehicle=bikeDistance<cngDistance?'motorcycle':'cng';
+    player.riding=true;driving.reset();
+    toast(player.vehicle==='motorcycle'?'🏍️ মোটরসাইকেল চালাও':'🛺 CNG চালাও');
+  }else toast(mission<MISSIONS.length?'📍 মিশনের হলুদ চিহ্নের কাছে যাও':'গাড়ি বা মোটরসাইকেলের কাছে যাও');
 }
 interact.addEventListener('click',act);
 $('start').addEventListener('click',()=>{playing=true;$('splash').classList.add('hidden');toast('🇧🇩 গ্রামের সমস্যা: মেম্বারের সঙ্গে কথা বলো');});
@@ -465,8 +477,14 @@ const quality=()=>{
   const withShadows=q==='cinematic'||(!mobile&&q==='high');
   sun.castShadow=withShadows;renderer.shadowMap.enabled=withShadows;
   if(withShadows)sun.shadow.mapSize.set(mobile?512:1024,mobile?512:1024);
-  realism.setQuality(q);referenceScenery.setQuality(q);resize();
+  realism.setQuality(q);referenceScenery.setQuality(q);hybrid.setQuality(q);resize();
 };
+$('splat').addEventListener('click',async()=>{
+  const el=$('splat');el.disabled=true;
+  await hybrid.toggle();
+  el.textContent=hybrid.isEnabled()?'🌿 SPLAT: ON':'🌿 SPLAT: OFF';
+  el.disabled=false;
+});
 $('toggle').addEventListener('click',()=>{
   q=q==='low'?'high':q==='high'?'cinematic':'low';quality();
   toast(q==='cinematic'?'🎬 Cinematic graphics · বেশি GPU':q==='high'?'✨ সুন্দর গ্রাফিক্স':'⚡ Battery saver');
@@ -480,17 +498,25 @@ function update(dt){
   const kx=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0)+input.x;
   const kz=(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0)+input.y;
   const length=Math.hypot(kx,kz);
-  if(playing&&length>.08){
+  if(playing&&player.riding){
+    const d=driving.step(dt,-THREE.MathUtils.clamp(kz,-1,1),THREE.MathUtils.clamp(kx,-1,1),player.vehicle);
+    player.angle+=d.headingDelta;
+    const dx=-Math.sin(player.angle)*d.speed*dt,dz=-Math.cos(player.angle)*d.speed*dt;
+    const nx=player.x+dx,nz=player.z+dz;
+    if(!blocked(nx,player.z))player.x=nx;else driving.bump();
+    if(!blocked(player.x,nz))player.z=nz;else driving.bump();
+    player.speed=Math.abs(driving.getSpeed());
+  }else if(playing&&length>.08){
     const x=kx/Math.max(1,length),z=kz/Math.max(1,length);
     const dx=Math.cos(camYaw)*x+Math.sin(camYaw)*z;
     const dz=-Math.sin(camYaw)*x+Math.cos(camYaw)*z;
-    const targetSpeed=player.riding?11.5:((keys.has('ShiftLeft')||keys.has('ShiftRight')||runHeld)?7.2:4.2);
+    const targetSpeed=(keys.has('ShiftLeft')||keys.has('ShiftRight')||runHeld)?7.2:4.2;
     const x2=player.x+dx*targetSpeed*dt,z2=player.z+dz*targetSpeed*dt;
     if(!blocked(x2,player.z))player.x=x2;
     if(!blocked(player.x,z2))player.z=z2;
     player.angle=Math.atan2(-dx,-dz);
     player.speed=targetSpeed;
-  } else player.speed*=.75;
+  }else player.speed*=.75;
   for(const npc of villagerNPCs){
     if(!npc.group)continue;
     const toPlayer=Math.hypot(player.x-npc.position.x,player.z-npc.position.z);
@@ -513,16 +539,20 @@ function update(dt){
   villageDetails.update(player.x,player.z);
   playerGroundShadow.position.set(player.x,.08,player.z);
   playerGroundShadow.visible=!player.riding;
-  carRoot.position.set(player.riding?player.x:carPark.x,0,player.riding?player.z:carPark.z);
-  carRoot.rotation.y=player.riding?player.angle:0;
-  const near=Math.hypot(player.x-carPark.x,player.z-carPark.z)<6;
+  carRoot.position.set(player.riding&&player.vehicle==='cng'?player.x:carPark.x,0,player.riding&&player.vehicle==='cng'?player.z:carPark.z);
+  carRoot.rotation.y=player.riding&&player.vehicle==='cng'?player.angle:0;
+  bikeRoot.position.set(player.riding&&player.vehicle==='motorcycle'?player.x:bikePark.x,0,player.riding&&player.vehicle==='motorcycle'?player.z:bikePark.z);
+  bikeRoot.rotation.y=player.riding&&player.vehicle==='motorcycle'?player.angle:0;
+  const cngNear=Math.hypot(player.x-carPark.x,player.z-carPark.z)<6;
+  const bikeNear=Math.hypot(player.x-bikePark.x,player.z-bikePark.z)<6;
+  const near=cngNear||bikeNear;
   const targetNear=playing&&nearMission();
   interact.disabled=!playing||(!player.riding&&!near&&!targetNear);
-  interact.innerHTML=player.riding?'<b>🚶</b>নামো':targetNear?'<b>✋</b>'+MISSIONS[mission].action:'<b>🛺</b>উঠো';
+  interact.innerHTML=player.riding?'<b>🚶</b>নামো':targetNear?'<b>✋</b>'+MISSIONS[mission].action:bikeNear&&!cngNear?'<b>🏍️</b>উঠো':'<b>🛺</b>উঠো';
   markerGroup.visible=playing&&mission<MISSIONS.length;
   if(markerGroup.visible){const target=MISSIONS[mission];markerGroup.position.set(target.x,.04+Math.sin(elapsed*2)*.025,target.z);markerDiamond.rotation.y+=dt*.7;}
   missionSatchel.visible=playing&&mission===1;
-  $('speed').textContent=(player.riding?'🛺 CNG':'🚶 হাঁটা')+` · ${Math.round(player.speed*3.6)} km/h`;
+  $('speed').textContent=(player.vehicle==='motorcycle'?'🏍️ বাইক':player.vehicle==='cng'?'🛺 CNG':'🚶 হাঁটা')+` · ${Math.round(player.speed*3.6)} km/h`;
   const distance=(camView===1?11.2:camView===2?4.6:player.riding?8.8:6.8),height=player.riding?2:1.4;
   temp.set(player.x+Math.sin(camYaw)*distance*Math.cos(camPitch),height+distance*Math.sin(camPitch),player.z+Math.cos(camYaw)*distance*Math.cos(camPitch));
   camAt.lerp(temp,1-Math.exp(-dt*5.5));
