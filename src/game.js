@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { ASSETS, MISSIONS } from './asset-manifest.js';
 import { installRealism } from './realism.js';
+import { createCharacterMotion } from './character-motion.js';
 
 // Pagla v3 — real-time Three.js village. Progressive GLB assets are CC0; native
 // low-poly stand-ins remain visible if a model CDN request fails / is offline.
@@ -58,7 +59,7 @@ function ground(){
   const m=new THREE.Mesh(g,grassMat);m.position.y=-.16;m.receiveShadow=true;scene.add(m);
   // A curved dirt road with mapped UVs (not a long series of square tiles).
   const a=[],uv=[],idx=[];let v=0;
-  for(let z=-182;z<=182;z+=2){const x=roadX(z),w=3.8+Math.sin(z*.06)*.27;for(let side of [-1,1]){a.push(x+side*w,.015+Math.sin(z*.13)*.012,z);uv.push(side===-1?0:1,(z+182)/7);}if(z>-182){idx.push(v-2,v-1,v,v-1,v+1,v); }v+=2;}
+  for(let z=-182;z<=182;z+=2){const x=roadX(z),w=3.8+Math.sin(z*.06)*.27;for(let side of [-1,1]){a.push(x+side*w,.015+Math.sin(z*.13)*.012,z);uv.push(side===-1?0:1,(z+182)/7);}if(z>-182){idx.push(v-2,v,v-1,v-1,v,v+1); }v+=2;}
   const g2=new THREE.BufferGeometry();g2.setAttribute('position',new THREE.Float32BufferAttribute(a,3));g2.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g2.setIndex(idx);g2.computeVertexNormals();const road=new THREE.Mesh(g2,dirtMat);road.receiveShadow=true;scene.add(road);
   // Vertical wheel ruts and small damp highlights.
   const rut=mat('rut',0x735c44,.97,{transparent:true,opacity:.62});
@@ -251,8 +252,7 @@ progress();
 // Higher-detail CC0 skinned hero with plaid shirt + Walk / Run animations.
 // Remote download may fail (network/CORS); the original animated mesh
 // remains a playable fallback, so character loading is never blocking.
-let heroModel=null,heroMixer=null,heroCurrent=null,heroYOffset=0;
-const heroClips={};
+let heroModel=null,heroMotion=null,heroYOffset=0;
 loader.load('https://vibeassets.io/download/zpepqtthci?combined=1',gltf=>{
   const mesh=gltf.scene;
   const bounds=new THREE.Box3().setFromObject(mesh);
@@ -265,16 +265,14 @@ loader.load('https://vibeassets.io/download/zpepqtthci?combined=1',gltf=>{
     if(child.isMesh){child.castShadow=!mobile;child.receiveShadow=true;}
   });
   mesh.position.set(player.x,heroYOffset,player.z);
-  heroMixer=new THREE.AnimationMixer(mesh);
-  for(const clip of gltf.animations||[]){
-    const action=heroMixer.clipAction(clip);
-    const name=clip.name.toLowerCase();
-    if(name.includes('walk'))heroClips.walk=action;
-    if(name.includes('run'))heroClips.run=action;
-    if(name.includes('idle'))heroClips.idle=action;
+  heroMotion=createCharacterMotion(mesh,gltf.animations || []);
+  // Prefer the reliable procedural walker over a frozen skinned T-pose.
+  if (heroMotion.boneCount < 8 || (!heroMotion.hasArms && !heroMotion.usableClips.length)) {
+    console.warn('Hero has no usable humanoid rig; keeping animated fallback');
+    return;
   }
   scene.add(mesh);heroModel=mesh;
-  $('status').textContent='3D hero + '+assetsLoaded.size+' props';
+  $('status').textContent='3D hero animated · '+heroMotion.usableClips.join('/')+' · '+assetsLoaded.size+' props';
 },undefined,error=>{console.warn('Photoreal character CDN unavailable; using playable fallback',error);});
 
 const joystick=$('joystick'),stick=$('stick'),run=$('run'),interact=$('interact');
@@ -336,14 +334,7 @@ function update(dt){
     heroModel.visible=!player.riding;
     heroModel.position.set(player.x,heroYOffset,player.z);
     heroModel.rotation.y=player.angle;
-    const action=player.riding||player.speed<.15?(heroClips.idle||null):
-      (player.speed>5.4&&heroClips.run?heroClips.run:(heroClips.walk||heroClips.run||null));
-    if(action!==heroCurrent){
-      if(heroCurrent)heroCurrent.fadeOut(.18);
-      if(action)action.reset().fadeIn(.18).play();
-      heroCurrent=action;
-    }
-    if(heroMixer)heroMixer.update(dt);
+    if(heroMotion)heroMotion.update(dt,player.speed,elapsed,player.riding);
   }
   if(!player.riding){
     person.root.position.set(player.x,Math.sin(elapsed*10)*Math.min(.024,player.speed*.004),player.z);person.root.rotation.y=player.angle;
