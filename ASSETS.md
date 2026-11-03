@@ -15,6 +15,7 @@ These GLB files are loaded at runtime from the provider's permanent HTTPS, CORS-
 | Parked commuter motorcycle | https://cdn.3dassets.dev/assets/36564/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-parked-motorcycle-d0a13e3f | Roadside |
 | Bicycle with carrier | https://cdn.3dassets.dev/assets/36561/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-bicycle-with-carrier-9d979e52 | Tea stall |
 | Fruit and vegetable stall | https://cdn.3dassets.dev/assets/36547/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-fruit-and-vegetable-st-280ccd20 | Bazaar |
+| Fruit and vegetable stall | https://cdn.3dassets.dev/assets/36547/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-fruit-and-vegetable-st-280ccd20 | Bazaar |
 
 License: https://creativecommons.org/publicdomain/zero/1.0/
 
