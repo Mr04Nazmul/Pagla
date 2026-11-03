@@ -65,3 +65,11 @@ When new CC BY assets are used in the future, add exact author, title, source li
 ## Ownership
 
 Original game code and layout belong to the Pagla repository owner. External packages and 3D asset licensing are separately recorded in [`assets/CREDITS.md`](assets/CREDITS.md). All rights reserved for original project content unless separately licensed.
+
+## Village realism expansion (2026-11-03)
+
+The current mobile browser edition now imports `village-upgrade.js`, which extends the Three.js v3 game without replacing controls or missions. Added: six original corrugated-tin village houses, a weathered metal texture for existing roofs, small near-camera fields of imported CC0 rice plants, static CC0 villager man/woman GLBs around homes and bazaar, an imported corrugated market shed, and a more detailed CC0 cow model. Four additional original villagers walk simple paths with arm motion. Asset loading status is visible separately in the HUD.
+
+All GLB files are loaded from the source CDN at runtime and can fail independently; original fallback gameplay remains playable. The imported human models are *static low-poly figures*, not photorealistic rigged actors. The models do not yet provide native iOS/Android game packages or advanced physics. This is still a mobile-friendly 3D web prototype, not GTA V quality.
+
+See [ASSETS.md](ASSETS.md) for all source asset URLs and CC0 licensing.
