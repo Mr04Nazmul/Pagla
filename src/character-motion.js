@@ -76,8 +76,8 @@ export function createCharacterMotion(root, animations = []) {
     const step = Math.sin(elapsed * (speed > 5.4 ? 11.8 : 8.6));
     const breath = Math.sin(elapsed * 1.65) * .025;
     if (hasArms) {
-      pose(bones.leftArm, axisZ, 1.04 + breath + step * gait * .24);
-      pose(bones.rightArm, axisZ, -1.04 - breath + step * gait * .24);
+      pose(bones.leftArm, axisZ, 1.52 + breath + step * gait * .14);
+      pose(bones.rightArm, axisZ, -1.52 - breath + step * gait * .14);
       pose(bones.leftForeArm, axisX, -.14);
       pose(bones.rightForeArm, axisX, -.14);
     }
