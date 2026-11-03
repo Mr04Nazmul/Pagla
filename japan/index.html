@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
 <meta name="theme-color" content="#0e181c">
 <meta name="description" content="Kobe Futabacho 3D—real OpenStreetMap footprints, streets and mobile 3D model export.">
-<title>Kobe Real Area 3D · Pagla Japan</title>
+<title>Kobe 3D — Open Instantly · Pagla Japan</title>
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
 :root{font-family:system-ui,-apple-system,"Noto Sans Bengali","Hiragino Kaku Gothic ProN",sans-serif;color:#f8f9f4;--panel:rgba(8,19,24,.81);--hairline:rgba(229,244,234,.20);--accent:#d0f3b2;color-scheme:dark}
@@ -37,15 +37,6 @@ button{font:inherit;color:inherit;cursor:pointer}button:disabled{opacity:.48;cur
 #mode .action{flex:1;min-width:0;padding:10px 8px}
 #links{pointer-events:auto;position:absolute;left:12px;bottom:calc(env(safe-area-inset-bottom) + 12px);font-size:9px}
 a{color:#e5efdd}#links a{text-decoration:underline}
-#overlay{position:fixed;inset:0;z-index:5;background:linear-gradient(180deg,rgba(4,14,17,.12),rgba(4,14,17,.74) 40%,rgba(2,9,11,.95));display:flex;align-items:flex-end;justify-content:center;padding:22px 18px calc(env(safe-area-inset-bottom) + 48px)}
-#overlay.hide{display:none}
-#hero{width:min(100%,470px);text-align:center}
-#hero .eyebrow{color:#e0f1c8;letter-spacing:2px;font-weight:800;font-size:11px}
-#hero h1{font-size:clamp(34px,9vw,56px);margin:10px 0 13px;line-height:1.13;text-shadow:0 6px 25px #000b}
-#hero h1 em{color:#d4f4bb;font-style:normal}
-#hero p{font-size:13px;color:#d9e5dc;line-height:1.7;margin:14px 0 22px}
-#begin{padding:17px;border:0;width:100%;background:linear-gradient(110deg,#dff5b7,#a5d1b5);border-radius:14px;color:#142e22;font-weight:900;font-size:17px}
-#hero small{display:block;font-size:10px;line-height:1.6;color:#c2cfca;margin-top:14px}
 #fail{display:none;position:fixed;inset:0;background:#071b20;color:white;z-index:9;justify-content:center;align-items:center;padding:28px;text-align:center;line-height:1.8}
 .maplibregl-control-container{font-size:10px}.maplibregl-ctrl-attrib{background:rgba(255,255,255,.83)!important;color:#20352e!important}
 @media(max-width:380px){#brand strong{font-size:16px}#brand{padding:9px}#info{padding:8px}#joy{width:111px;height:111px}#knob{left:28px;top:28px}.action{font-size:11px;padding:9px 7px}#status{top:calc(env(safe-area-inset-top) + 105px)}}
@@ -58,13 +49,12 @@ a{color:#e5efdd}#links a{text-decoration:underline}
 <div id="vignette"></div>
 <div id="ui">
 <div id="top"><div class="glass" id="brand"><div class="tag">PAGLA · JAPAN REAL 3D</div><strong>神戸 · 二葉町</strong><small>Shinyō Municipal Housing area<br>長田区 · 兵庫県</small></div><div class="glass" id="info"><strong>OSM → 3D</strong><small id="count">Loading buildings…</small><small id="range">Nearby 250 m</small></div></div>
-<div class="glass" id="status" role="status">বাস্তব map data লোড হচ্ছে…</div>
+<div class="glass" id="status" role="status">🗺️ Japan 3D Map সরাসরি খুলছে…</div>
 <div id="message" role="status"></div>
 <div id="bottom"><div id="joy" aria-label="Walk joystick"><div id="knob"></div></div><div id="controls"><div id="mode"><button type="button" class="action" id="walk">🚶 Walk</button><button type="button" class="action" id="bird">⬆ Top</button><button type="button" class="action" id="orbit">↻ Orbit</button></div><button type="button" class="action" id="aerial">🛰 航空写真 ON</button><button type="button" class="action primary" id="export" disabled>⬇ 3D GLB Model</button><button type="button" class="action" id="reset">📍 Original location</button></div></div>
 <div id="links">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OSM</a> · <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.gsi.go.jp/" target="_blank" rel="noopener">国土地理院</a></div>
 </div>
-<div id="overlay"><div id="hero"><div class="eyebrow">REAL LOCATION · KOBE, JAPAN</div><h1>তোমার দেওয়া <em>জাপানের জায়গা</em> এখন 3D</h1><p>Google Maps-এর লিংক থেকে শনাক্ত করা Futabachō এলাকার বাস্তব রাস্তা ও OpenStreetMap-এর ভবনের footprint দিয়ে 3D reconstruction। স্ক্রিন drag করে দেখো, joystick দিয়ে ক্যামেরা এগিয়ে নাও।</p><button id="begin" type="button">▶ 3D Area খুলে দেখো</button><small>এটি মানচিত্রভিত্তিক 3D reconstruction, আসল Google satellite photo বা 100% photorealistic scan নয়। কোনো ভবনের height অনুপস্থিত থাকলে আনুমানিক ব্যবহার করা হয়। নিচে জাপান সরকারের GSI aerial imagery ব্যবহার করা হয়েছে।</small></div></div>
 <div id="fail"><div><h2>3D Map চালু করা যায়নি</h2><p id="failReason">Safari অথবা Chrome-এ WebGL ও ইন্টারনেট প্রয়োজন।</p><a href="https://www.openstreetmap.org/#map=18/34.6558125/135.1519375" target="_blank" rel="noopener">2D Map খুলে দেখো</a></div></div>
-<script type="module" src="./app.js?v=20261103j2"></script>
+<script type="module" src="./app.js?v=20261103j3"></script>
 </body>
 </html>
