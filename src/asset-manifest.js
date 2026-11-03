@@ -11,6 +11,15 @@ export const ASSETS = Object.freeze({
   bicycle: {url: root+'36561/v1/model.glb', size: 54, metres: [.52,1.09,1.874]},
   motorcycle: {url: root+'36564/v1/model.glb', size: 37, metres: [.64,1.081,1.717]},
   charpoy: {url: root+'36568/v1/model.glb', size: 30, metres: [.92,.48,1.9]},
+  cow: {url: root+'29184/v1/model.glb', size: 374, metres: [.86,2.1,2.8]},
+  jersey: {url: root+'29185/v1/model.glb', size: 366, metres: [.86,2.1,2.8]},
+  goat: {url: root+'29192/v1/model.glb', size: 352, metres: [.8,1.4,1.5]},
+  shrubs: {url: root+'36145/v1/model.glb', size: 145, metres: [2.6,1.23,2.67]},
+  palm: {url: root+'36142/v1/model.glb', size: 58, metres: [2.57,2.64,2.85]},
+  hay: {url: root+'29213/v1/model.glb', size: 213, metres: [1.52,1.52,1.22]},
+  waterTrough: {url: root+'29217/v1/model.glb', size: 373, metres: [1.8,.7,.8]},
+  milkChurns: {url: root+'29219/v1/model.glb', size: 221, metres: [1.2,.7,.7]},
+  wheelbarrow: {url: root+'29218/v1/model.glb', size: 445, metres: [1.8,.8,1.0]},
 });
 export const MISSIONS = [
   {x:19,z:-25,name:'গ্রামের বাড়ি',message:'🏡 গ্রামের বাড়ি ঘুরে দেখা শেষ!'},
