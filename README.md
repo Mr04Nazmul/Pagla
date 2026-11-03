@@ -9,6 +9,20 @@ A **playable mobile-first 3D village exploration game** that works in iPhone Saf
 
 **Quality toggle:** Low graphics is the mobile-first default; High enables extra detail and shadow mapping, which may reduce frame rate on older phones. These are rendering upgrades, **not a GTA-quality photorealistic scene**. The low-poly houses, countryside trees, and simplified vehicle physics still need more accurate high-fidelity assets for a screenshot-level match. Third-party CDN downloads and GPU/FPS on real iPhone/Android hardware have not been confirmed.
 
+## Playable village mission + HD assets update (November 3, 2026)
+
+After an iPhone screenshot showed a low-poly environment and static T-pose hero, the browser game received another targeted rebuild:
+
+- `src/character-motion.js`: validates GLB clip track bindings, uses embedded Walk/Run when compatible, and creates a breathing/standing and walking fallback to prevent a frozen T pose.
+- Corrected the muddy road triangle winding, photographed brick texture filename and UV repeat.
+- `src/village-detail.js`: original detailed tin house facades, verandas, windows/shutters, wood posts, Bengali tea stall signage, kettle, market counter, glasses and roadside props; distant details are hidden on mobile.
+- Clumped/instanced tree crowns replace single sharp-edged polyhedra; soft contact shadow helps ground the hero on phones.
+- Nine extra verified CC0 GLBs: two dairy cows, goat, palm, undergrowth, hay, trough, milk churns and wheelbarrow. Two CC0 humanoid NPCs attempt to load at the quest points with original fallback meshes.
+- **Interaction-based quest**: talk to a village member -> recover lost document by the pond -> deliver it at the tea shop. Action button, objective marker, mini-map and taka rewards.
+- `.github/workflows/mobile-smoke.yml` and `tests/mobile-smoke.mjs`: Chromium WebGL checks at iPhone-like, Android-like and landscape viewports, with screenshots as artifacts.
+
+**Limitations:** A headless Chromium viewport does not prove real Safari/Android GPU compatibility. The scene is still a realistic-leaning WebGL prototype, not GTA-level photo realism. Some buildings are procedural, some models are lower detail, and mobile network/FPS are device-dependent. Static farm animals are not rigged; the CNG has simplified physics. All third-party assets are loaded progressively from their sources and may fail on bad networks.
+
 ## November 2026 Three.js / glTF upgrade
 
 - **Real `GLTFLoader` integration** for seven CC0 `.glb` models from 3DAssets.dev (banana, bamboo, tea stall, bicycle, motorcycle, CNG/auto-rickshaw, charpoy). Each is rendered in the world, with exact asset URLs, verified asset pages, and licence information in [`assets/CREDITS.md`](assets/CREDITS.md). The GLB files are streamed over an official CORS-enabled CDN, not checked into Git. Their embedded textures are used directly.
