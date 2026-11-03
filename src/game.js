@@ -331,7 +331,7 @@ function minimap(){
 }
 function frame(now){
   const dt=Math.min(.05,Math.max(.002,(now-last)/1000));last=now;
-  update(dt);renderer.render(scene,camera);frameCounter++;
+  update(dt);realism.update(camera);renderer.render(scene,camera);frameCounter++;
   if(frameCounter%12===0){minimap();fpsValue=Math.round(1/dt);$('fps').textContent=`${fpsValue} FPS · ${assetsLoaded.size} GLB models`;
     if(playing&&mobile&&q==='high'&&fpsValue<24){if(++lowFrames>8){q='low';quality();toast('⚡ FPS উন্নত করতে graphics কমানো হয়েছে');}} else lowFrames=Math.max(0,lowFrames-2);
   }
