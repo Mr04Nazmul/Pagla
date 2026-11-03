@@ -2,7 +2,7 @@
 
 This project is an original, mobile-friendly Bangladesh-inspired 3D game prototype. It is **not** an AAA-quality photorealistic game. Game logic and rural architecture are original procedural code.
 
-## Runtime GLB models (6 unique models)
+## Runtime GLB models (7 unique models)
 
 These GLB files are loaded at runtime from the provider's permanent HTTPS, CORS-enabled CDN. They are not copied into the repository. The models' published license is **CC0 1.0 Universal** (no attribution legally required; original URLs included here for provenance). Provider: 3DAssets.dev. Their geometry is AI-generated according to the publisher's metadata.
 
@@ -14,6 +14,7 @@ These GLB files are loaded at runtime from the provider's permanent HTTPS, CORS-
 | Auto rickshaw | https://cdn.3dassets.dev/assets/36560/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-auto-rickshaw-51b91c47 | Drivable CNG |
 | Parked commuter motorcycle | https://cdn.3dassets.dev/assets/36564/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-parked-motorcycle-d0a13e3f | Roadside |
 | Bicycle with carrier | https://cdn.3dassets.dev/assets/36561/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-bicycle-with-carrier-9d979e52 | Tea stall |
+| Fruit and vegetable stall | https://cdn.3dassets.dev/assets/36547/v1/model.glb | https://3dassets.dev/assets/indian-bazaar-street-and-temple-fruit-and-vegetable-st-280ccd20 | Bazaar |
 
 License: https://creativecommons.org/publicdomain/zero/1.0/
 
