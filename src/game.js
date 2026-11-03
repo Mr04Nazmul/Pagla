@@ -310,6 +310,8 @@ function deployModel(key,root){
     case 'waterTrough':copy(13,-44,-.4,1);break;
     case 'milkChurns':copy(-15.9,-94.4,-.5,1);break;
     case 'wheelbarrow':copy(-13,-80,.3,1);break;
+    case 'coconutPalm':for(const [x,z,yaw,scale] of [[-10,1,.2,1],[-15,-45,1.4,1.1],[12,45,1.8,1.06],[-17,78,.3,1],[31,-78,2.5,1.1],[-33,-108,.5,1]])copy(x,z,yaw,scale);break;
+    case 'tropicalCanopy':for(const [x,z,scale] of [[-12,-11,.84],[-11,30,.77],[15,-50,.85],[36,81,.93],[-36,109,.89]])copy(x,z,rnd(0,6.28),scale);break;
   }
 }
 for(const [key,entry] of Object.entries(ASSETS)){
@@ -475,7 +477,8 @@ function update(dt){
   if(heroModel){
     heroModel.visible=!player.riding;
     heroModel.position.set(player.x,heroYOffset,player.z);
-    heroModel.rotation.y=player.angle;
+    // Imported model points toward +Z; look from behind, not directly at its face.
+    heroModel.rotation.y=player.angle+Math.PI;
     if(heroMotion)heroMotion.update(dt,player.speed,elapsed,player.riding);
   }
   if(!player.riding){
