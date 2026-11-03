@@ -1,79 +1,46 @@
-# Pagla — গ্রামবাংলা Open World 3D 🇧🇩
+# Pagla — গ্রামবাংলার 3D অভিযান 🇧🇩
 
-**Playable v3 browser game:** https://mr04nazmul.github.io/Pagla/  
-**Source:** [index.html](index.html), [game-v3.js](game-v3.js)  
-**Asset sources and licenses:** [ASSETS.md](ASSETS.md)  
-**Previous WebGL prototype:** [v2.html](v2.html)
+A **playable mobile-first 3D village exploration game** that works in iPhone Safari and Android Chrome with WebGL. This repository serves a static game via GitHub Pages: https://mr04nazmul.github.io/Pagla/
 
-## Current web-game build
+## November 2026 Three.js / glTF upgrade
 
-- Three.js v0.180.0 mobile-oriented rendering and GLTFLoader for 7 **CC0 GLB** model types (banana, bamboo, tea stall, auto rickshaw, motorcycle, bicycle, produce stall).
-- Bangladesh-inspired 3D village with custom textured dirt road, rural tin-roof houses, fields, pond, road props and map.
-- Touch joystick, swipe camera, sprint, drivable auto rickshaw, three destination objectives.
-- iPhone Safari / Android Chrome targeting, capped mobile pixel ratio, optional 3D asset fallback.
-- **Realism limit:** this is an early playable mobile **prototype, not photorealistic GTA graphics**. Character/environment meshes are still largely procedural. Gameplay and page source are published; on-device GPU visual QA is not yet confirmed. 3D models depend on external CDN connectivity, and internet is required.
+- **Real `GLTFLoader` integration** for seven CC0 `.glb` models from 3DAssets.dev (banana, bamboo, tea stall, bicycle, motorcycle, CNG/auto-rickshaw, charpoy). Each is rendered in the world, with exact asset URLs, verified asset pages, and licence information in [`assets/CREDITS.md`](assets/CREDITS.md). The GLB files are streamed over an official CORS-enabled CDN, not checked into Git. Their embedded textures are used directly.
+- Replaced handcrafted WebGL rendering on the root landing page with a pinned **Three.js** ES module/import-map and physically based materials. The original browser version remains available at [`legacy.html`](legacy.html), and comparison version at `v2.html`.
+- Curved dirt road with procedural texture, rice field instancing, real-world-scale tin-roof village houses, wet patches, pond, bamboo fences, electric poles and wires, atmospheric fog, daylight, and multiple village props.
+- Animated third-person character, on-foot walking and sprinting, 3-step exploration mission, minimap, **enter/drive/exit CNG**, perspective drag and camera cycling.
+- Mobile pointer-captured virtual joystick, touch camera, on-screen controls, iOS safe-area HUD, WebGL renderer quality setting, bounded DPR, low-power mode, basic FPS display and automatic quality reduction under sustained low FPS.
+- `manifest.webmanifest` and SVG icon for add-to-home-screen affordances. This is **not an offline PWA**, because Third-party CDN JS/GLB resources require network access.
 
----
+### How to play
 
-## Archived v2 notes
+1. Open https://mr04nazmul.github.io/Pagla/ using Safari on iPhone or Chrome on Android (landscape mode recommended).
+2. Tap **খেলা শুরু করো**, steer with the joystick, swipe/drag the world to rotate the camera. **দৌড়** = sprint. **উঠো** near the CNG = drive; **নামো** = exit.
+3. Complete the three destinations (house, pond, tea stall) as marked on the minimap.
 
-# Pagla — গ্রামবাংলা 3D 🇧🇩
+Desktop controls: `W/A/S/D` or arrow keys to move, drag the world with the mouse to look around, `Shift` to sprint, `F` to enter/exit CNG.
 
-A **playable 3D browser-game prototype** inspired by the rural villages of Bangladesh. Open the website in a WebGL-capable browser and press **খেলা শুরু করো**.
+### Files
 
-## Play
+- `index.html` — mobile UI, splash screen, pinned import map.
+- `src/game.js` — Three.js world, lighting, material geometry, player, joystick and missions, renderer and runtime model integration.
+- `src/asset-manifest.js` — CC0 model links, known dimensions, mission data.
+- `assets/CREDITS.md` — direct model source and licence list.
+- `assets/icon.svg`, `manifest.webmanifest` — home-screen icon and metadata.
+- `legacy.html`, `v2.html` — older playable prototypes for fallback/comparison.
+- `Unreal/GramBangla/` — separate UE5 prototype for desktop future work (not supported by GitHub Pages hosting).
 
-GitHub Pages: https://mr04nazmul.github.io/Pagla/
+### Development / deployment
 
-## Browser visual update (2026-11-03)
+Static hosting only; **no server, cloud database, credentials, paid APIs or build step**. GitHub Pages publishes root `index.html` from `main`. All imports are root-relative or project-relative, so the same code works under `/Pagla/`.
 
-The root `index.html` is now **v2**. A saved copy of the original is `legacy.html`, and `v2.html` is kept for comparison.
+To test locally, run a static web server such as `python3 -m http.server 8080` in the repository root. Launch the served URL in a current browser. The web page must be served over HTTP(S), not `file://`, for ES modules and GLBs.
 
-**Implemented in v2:** improved shaded/noisy terrain, darker rural colors, puddles, more roof detailing, bamboo fences, extra grass/soil detail, cinematic lower camera, and an original procedural adult civilian character with rounded head, facial features, clothing, and animated arms/legs when walking.
+### Quality and verification notes
 
-**Reality check:** the browser version is still a **stylized/procedural WebGL prototype, NOT photorealism**. High-end realism requires licensed realistic 3D human/foliage/environment assets and a true 3D game-asset pipeline (see the Unreal Engine 5 source project). A JavaScript runtime/gameplay test passed with a mocked graphics driver; GPU rendering couldn't be visually verified in the test environment.
+This is **a playable 3D browser prototype with third-party GLB assets; it is not GTA V or photo-realistic AAA rendering**. The model thumbnails and pages are verified for their licences and source URLs, but actual iPhone Safari/Android Chrome GPU screenshots and cross-device FPS must be tested on real phones. The CNG follows direct game controls with simplified vehicle physics; no road AI, advanced collisions, NPCs or engine audio yet. The browser must be online for the CDN resources.
 
-## Gameplay
+When new CC BY assets are used in the future, add exact author, title, source link, license link and any changes here; do not omit attribution. Right now this integration only uses CC0 external models.
 
-- Walk around a stylized Bangladeshi village, including dirt roads, village houses, a pond, crops, trees, and local shops.
-- Explore three locations to complete the introductory objectives: village home, pond, and bazaar.
-- Walk up to the CNG auto-rickshaw and press **F** or the on-screen action button to drive it.
-- Mini-map and live mission HUD.
+## Ownership
 
-## Controls
-
-| Platform | Move | Camera | Interaction |
-| --- | --- | --- | --- |
-| Desktop | WASD / arrow keys | Mouse drag | F, when near vehicle |
-| Mobile | Virtual joystick | Drag on screen | Action button |
-
-Shift or the on-screen run button to move faster while on foot.
-
-## Technical
-
-- Single-file HTML, CSS, JavaScript and handcrafted **WebGL** rendering.
-- No server, API keys, database, or build step.
-- Serve `index.html` with any static hosting service (GitHub Pages, Vercel, etc.).
-- Works best in up-to-date browsers with WebGL enabled.
-
-## Development
-
-This is **an early low-poly playable prototype**, not a GTA-like photorealistic game. The village is fictional, inspired by Bangladesh; it does not claim precise real-world geography. This repo contains the source game. GitHub Pages publishes the static files directly from the `main` branch (repository root).
-
-### Roadmap
-
-- More realistic rural assets / materials / lighting.
-- NPC pedestrians and Bangla interactions.
-- Better vehicle physics, sounds and traffic.
-- More missions and Android performance optimization.
-
-## License
-
-All rights reserved by repository owner unless an explicit license is added.
-
-
-## Unreal Engine 5 — realistic countryside edition (work in progress)
-
-The UE5 source project is now in [Unreal/GramBangla](Unreal/GramBangla/README.md). It includes a C++ third-person movement prototype and an editor-only Python script to generate a rural Bangladesh blockout (tin houses, paddy fields, pond, market, footbridge and dirt road). It is **not** compiled or yet photorealistic.
-
-**Important:** Unreal Engine cannot run directly on GitHub Pages; the browser game here remains the WebGL prototype. Running high-fidelity UE5 in a mobile browser requires a packaged UE5 game plus a GPU-hosted Pixel Streaming service.
+Original game code and layout belong to the Pagla repository owner. External packages and 3D asset licensing are separately recorded in [`assets/CREDITS.md`](assets/CREDITS.md). All rights reserved for original project content unless separately licensed.
