@@ -10,7 +10,8 @@ const assert = require('assert');
   const page = await browser.newPage({
     viewport: {width:390,height:844},
     deviceScaleFactor:2,
-    isMobile:true,hasTouch:true
+    isMobile:true,hasTouch:true,
+    acceptDownloads:true
   });
   const fatal=[];
   page.on('pageerror', e => fatal.push(e.message));
@@ -39,7 +40,19 @@ const assert = require('assert');
     assert.ok(result.introHidden,'Start button did not work');
     assert.ok(result.aerialButton,'Aerial photo toggle missing');
     assert.ok(!fatal.length,'Uncaught JavaScript exceptions: '+fatal.join(' | '));
-    // A missing building dataset can be legitimate; report the count rather than fabricate buildings.
+    if(result.exportEnabled){
+      const pending=page.waitForEvent('download',{timeout:60000});
+      await page.locator('#export').click();
+      const file=await pending;
+      const destination='test-artifacts/Kobe_Futabacho_OSM_3D.glb';
+      await file.saveAs(destination);
+      const buf=fs.readFileSync(destination);
+      assert.strictEqual(buf.subarray(0,4).toString('ascii'),'glTF','Downloaded file is not a binary GLB');
+      assert.ok(buf.length>1200,'Downloaded GLB is unexpectedly small');
+      console.log('Downloaded real OSM-derived GLB successfully:',buf.length,'bytes');
+    }else{
+      throw new Error('No usable OSM building footprints were loaded; GLB export disabled');
+    }
   } finally {
     await browser.close();
   }
