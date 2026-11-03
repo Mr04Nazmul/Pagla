@@ -120,7 +120,7 @@ export function installRealism({scene,renderer,sun,mobile,roadX,materials}){
  }
  pebbles.instanceMatrix.needsUpdate=true;scene.add(pebbles);
  function setQuality(mode){
-  const high=mode==='high';pebbles.visible=high;
+  const high=mode!=='low';pebbles.visible=high;
   blades.visible=true;puddles.visible=true;
   if(mobile){sun.shadow.mapSize.set(high?512:256,high?512:256);}
  }
