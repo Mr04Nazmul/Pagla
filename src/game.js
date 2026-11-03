@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { ASSETS, MISSIONS } from './asset-manifest.js';
-import { installRealism } from './realism.js';
-import { createCharacterMotion } from './character-motion.js';
-import { decorateVillage } from './village-detail.js';
+import { ASSETS, MISSIONS } from './asset-manifest.js?v=20261103r2';
+import { installRealism } from './realism.js?v=20261103r2';
+import { createCharacterMotion } from './character-motion.js?v=20261103r2';
+import { decorateVillage } from './village-detail.js?v=20261103r2';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 
 // Pagla v3 — real-time Three.js village. Progressive GLB assets are CC0; native
