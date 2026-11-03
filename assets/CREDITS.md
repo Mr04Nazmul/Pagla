@@ -59,3 +59,10 @@ The following **9 extra CC0 GLB models** are loaded progressively from their pub
 **Quest NPC:** Realistic middle-aged man in navy quarter-zip and jeans, rigged GLB with a walking clip, CC0. Original: https://vibeassets.io/a/grzp782xf7 ; https://vibeassets.io/download/grzp782xf7?combined=1 . As with the player character, an original fallback mesh remains if the asset is unavailable.
 
 The updated facades, signboards, verandas, wood items, clustered trees, mobile character shadows and quest objectives are original procedurally generated meshes or authored texture canvases. No GTA copyrighted assets, user reference screenshot pixels, or other commercial-game meshes are imported. Third-party model and library licenses remain their own.
+
+
+### Extra realistic tropical trees
+
+- Tall Coconut Palm (Tropical Island and Palm Trees), ~4.2k triangles, CC0: https://3dassets.dev/assets/tropical-island-ecology-tall-coconut-palm (GLB: https://cdn.3dassets.dev/assets/6797/v1/model.glb)
+- Buttressed emergent tree (Tropical Island and Palm Trees), 3.2k triangles, CC0: https://3dassets.dev/assets/tropical-island-ecology-buttressed-emergent-68f09c03 (GLB: https://cdn.3dassets.dev/assets/6818/v1/model.glb)
+Both models stream through official Three.js GLTFLoader and replace some empty or primitive roadside gaps; they remain stylized compared with scanned AAA foliage.
