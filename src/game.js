@@ -4,6 +4,7 @@ import { ASSETS, MISSIONS } from './asset-manifest.js';
 import { installRealism } from './realism.js';
 import { createCharacterMotion } from './character-motion.js';
 import { decorateVillage } from './village-detail.js';
+import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 
 // Pagla v3 — real-time Three.js village. Progressive GLB assets are CC0; native
 // low-poly stand-ins remain visible if a model CDN request fails / is offline.
@@ -328,6 +329,36 @@ loader.load('https://vibeassets.io/download/zpepqtthci?combined=1',gltf=>{
   $('status').textContent='3D hero animated · '+heroMotion.usableClips.join('/')+' · '+assetsLoaded.size+' props';
 },undefined,error=>{console.warn('Photoreal character CDN unavailable; using playable fallback',error);});
 
+// Two mission-giving villagers. The model is a CC0 rigged humanoid and
+// loads progressively, so the quest works even with a poor 4G connection.
+const npcPositions=[{x:11,z:-25.8,rotation:1.7},{x:-10,z:-86.6,rotation:2.6}];
+const villagerNPCs=[];
+for(const p of npcPositions){
+  const fallback=makeAvatar();
+  fallback.root.position.set(p.x,0,p.z);
+  fallback.root.rotation.y=p.rotation;
+  scene.add(fallback.root);
+  villagerNPCs.push({position:p, fallback:fallback.root, group:null,motion:null,offset:0});
+}
+loader.load('https://vibeassets.io/download/grzp782xf7?combined=1', gltf=>{
+  for(const npc of villagerNPCs){
+    const mesh=cloneSkinned(gltf.scene);
+    const box=new THREE.Box3().setFromObject(mesh);
+    const dim=box.getSize(new THREE.Vector3());
+    mesh.scale.setScalar(1.78/Math.max(.5,dim.y));
+    box.setFromObject(mesh);
+    npc.offset=-box.min.y;
+    mesh.position.set(npc.position.x,npc.offset,npc.position.z);
+    mesh.rotation.y=npc.position.rotation;
+    mesh.traverse(obj=>{if(obj.isMesh){obj.castShadow=!mobile;obj.receiveShadow=true;}});
+    scene.add(mesh);
+    npc.group=mesh;
+    npc.motion=createCharacterMotion(mesh,gltf.animations||[]);
+    if(npc.motion.boneCount<8){npc.group.visible=false;npc.group=null;continue;}
+    npc.fallback.visible=false;
+  }
+},undefined,error=>console.warn('Mission NPC GLB failed: using original villagers',error));
+
 const joystick=$('joystick'),stick=$('stick'),run=$('run'),interact=$('interact');
 let joyPointer=null,mousePointer=null,runHeld=false,camYaw=.22,camPitch=.22,playing=false,mission=0,camView=0,toastTimer;
 const input={x:0,y:0},keys=new Set();
@@ -414,6 +445,12 @@ function update(dt){
     player.angle=Math.atan2(-dx,-dz);
     player.speed=targetSpeed;
   } else player.speed*=.75;
+  for(const npc of villagerNPCs){
+    if(!npc.group)continue;
+    const toPlayer=Math.hypot(player.x-npc.position.x,player.z-npc.position.z);
+    if(toPlayer<9)npc.group.rotation.y=Math.atan2(player.x-npc.position.x,player.z-npc.position.z);
+    npc.motion.update(dt,0,elapsed,false);
+  }
   person.root.visible=!player.riding&&!heroModel;
   if(heroModel){
     heroModel.visible=!player.riding;
