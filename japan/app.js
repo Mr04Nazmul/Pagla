@@ -61,6 +61,11 @@ if(!maplibregl || !maplibregl.supported()) {
         return;
       }
       const labels=style.layers.find(l=>l.type==='symbol' && l.layout && l.layout['text-field'])?.id;
+      // Public GSI seamless aerial imagery. Visual use only; not baked into GLB exports.
+      try {
+        map.addSource('gsi-ortho',{type:'raster',tiles:['https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg'],minzoom:14,maxzoom:18,tileSize:256,attribution:'© <a href="https://www.gsi.go.jp/" target="_blank">国土地理院 (GSI)</a>'});
+        map.addLayer({id:'gsi-aerial',type:'raster',source:'gsi-ortho',minzoom:14,paint:{'raster-opacity':.95}},labels);
+      } catch(error) {console.warn('Optional GSI aerial photography failed',error);}
       // OpenMapTiles building source carries OSM building footprints and some surveyed heights.
       map.addLayer({
         id:'pagla-japan-buildings-3d',
@@ -117,6 +122,13 @@ $('orbit').addEventListener('click',()=>{
 $('reset').addEventListener('click',()=>{
   orbiting=false;$('orbit').textContent='↻ Orbit';
   map?.flyTo({center:[ORIGIN.lng,ORIGIN.lat],zoom:18.3,pitch:69,bearing:-22,speed:1.1});
+});
+let aerialOn=true;
+$('aerial').addEventListener('click',()=>{
+  aerialOn=!aerialOn;
+  if(map?.getLayer('gsi-aerial'))map.setLayoutProperty('gsi-aerial','visibility',aerialOn?'visible':'none');
+  $('aerial').textContent=aerialOn?'🛰 航空写真 ON':'🗺 Map only';
+  message(aerialOn?'GSI aerial imagery + OSM 3D':'OpenStreetMap 3D without aerial');
 });
 
 const joy=$('joy'),knob=$('knob');let joyPointer=null;
