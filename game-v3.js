@@ -273,7 +273,8 @@ const assetList=[
  {id:'tea',url:'https://cdn.3dassets.dev/assets/36551/v1/model.glb',locs:[[-15,-77]]},
  {id:'cng',url:'https://cdn.3dassets.dev/assets/36560/v1/model.glb',vehicle:true},
  {id:'bike',url:'https://cdn.3dassets.dev/assets/36564/v1/model.glb',locs:[[roadX(-56)+6,-56]]},
- {id:'cycle',url:'https://cdn.3dassets.dev/assets/36561/v1/model.glb',locs:[[-20,-75]]}
+ {id:'cycle',url:'https://cdn.3dassets.dev/assets/36561/v1/model.glb',locs:[[-20,-75]]},
+ {id:'produce',url:'https://cdn.3dassets.dev/assets/36547/v1/model.glb',locs:[[-20,-73]]}
 ];
 let loaded=0,failed=0;
 const status=$('#assets');
