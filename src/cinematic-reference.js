@@ -3,10 +3,10 @@ import * as THREE from 'three';
  * Pagla picture-reference scenery upgrade. This module preserves playable
  * controls/missions and relies on real geometry, not a 2D gameplay screenshot.
  */
-export function addCinematicVillage({scene, loader, roadX, mobile}) {
+export function addCinematicVillage({scene, loader, roadX, mobile,roofTin,roofRust}) {
  const scenery=new THREE.Group();scenery.name='Reference-inspired Gram Bangla scenery';scene.add(scenery);
  const material=(color,roughness=1,more={})=>new THREE.MeshStandardMaterial({color,roughness,...more});
- const wood=material(0x684e38), wood2=material(0x9c7654), tin=material(0x7d8983,.62,{metalness:.32,side:THREE.DoubleSide}), rusty=material(0x8e6756,.83,{metalness:.12});
+ const wood=material(0x684e38), wood2=material(0x9c7654), tin=roofTin||material(0x7d8983,.62,{metalness:.32,side:THREE.DoubleSide}), rusty=roofRust||material(0x8e6756,.83,{metalness:.12});
  const ground=material(0x987f61), rubber=material(0x25272a), chrome=material(0x9ea9a5,.32,{metalness:.65}), glass=material(0xa3b9a8,.3,{transparent:true,opacity:.78});
  const mesh=(parent,geo,mat,x=0,y=0,z=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.receiveShadow=true;parent.add(m);return m;};
  const cub=(parent,w,h,d,mat,x=0,y=0,z=0)=>mesh(parent,new THREE.BoxGeometry(w,h,d),mat,x,y,z);
@@ -19,7 +19,7 @@ export function addCinematicVillage({scene, loader, roadX, mobile}) {
  ctx.font='40px "Noto Sans Bengali",sans-serif';ctx.fillText('চা  •  বিস্কুট  •  নাস্তা',512,202);
  const signTexture=new THREE.CanvasTexture(textCanvas);signTexture.colorSpace=THREE.SRGBColorSpace;
  // Detailed roadside tea shop visible near the opening player camera.
- const tea=new THREE.Group();tea.position.set(roadX(-18)+13,0,-18);tea.rotation.y=-.12;scenery.add(tea);
+ const tea=new THREE.Group();tea.position.set(roadX(-9)+13,0,-9);tea.rotation.y=Math.PI-.18;scenery.add(tea);
  cub(tea,8.5,.2,5.5,ground,0,.08,0);
  for(const x of [-3.8,3.8])for(const z of [-2.35,2.35])cyl(tea,.095,.11,3.25,wood,x,1.73,z);
  const shade=cub(tea,9.4,.14,6.4,tin,0,3.43,0);shade.rotation.z=.05;
@@ -71,6 +71,25 @@ export function addCinematicVillage({scene, loader, roadX, mobile}) {
   dummy.updateMatrix();rice.setMatrixAt(placed++,dummy.matrix);
  }
  rice.count=placed;rice.instanceMatrix.needsUpdate=true;rice.frustumCulled=false;scenery.add(rice);
+ // A shallow roadside canal at the starting vista, so water is visible immediately.
+ const canal=new THREE.Group();canal.position.set(roadX(-5)-12,0,-8);scenery.add(canal);
+ const canalWater=material(0x608c86,.2,{metalness:.06,transparent:true,opacity:.85,side:THREE.DoubleSide});
+ const bank=material(0x7f694d,.94);
+ const bed=cub(canal,9,.05,18,bank,0,-.12,0);
+ const sheet=mesh(canal,new THREE.PlaneGeometry(8.4,16.8),canalWater,0,.015,0);sheet.rotation.x=-Math.PI/2;
+ for(let k=0;k<26;k++){
+  const a=k*2.399963, rr=Math.sqrt((k+.4)/27);
+  const x=Math.cos(a)*3.3*rr,z=Math.sin(a)*7.1*rr;
+  const lotus=mesh(canal,new THREE.CircleGeometry(.13+(k%3)*.05,8),material(0x5b9b64,1,{side:THREE.DoubleSide}),x,.044,z);
+  lotus.rotation.x=-Math.PI/2;
+ }
+ // Reeds grow along the bank; no opaque texture walls.
+ const reedMaterial=material(0x426d31,.99,{side:THREE.DoubleSide});
+ for(let k=0;k<46;k++){
+  const z=-8+k*.35,x=(k%2?4.3:-4.4);
+  const reed=mesh(canal,new THREE.PlaneGeometry(.12,.55+(k%4)*.12),reedMaterial,x,.30,z);
+  reed.rotation.y=k*.73;
+ }
  // Pond-side water lilies and pink lotus near the mission.
  const lily=material(0x569961,1,{side:THREE.DoubleSide}),petal=material(0xe8b8c4,.75);
  for(let i=0;i<25;i++){
