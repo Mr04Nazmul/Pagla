@@ -251,6 +251,26 @@ function makeAvatar(){
 }
 const person=makeAvatar();scene.add(person.root);
 const player={x:roadX(12),z:12,angle:0,speed:0,riding:false};
+
+function blobShadow(radius=1.55){
+  const cv=document.createElement('canvas');cv.width=cv.height=128;
+  const cx=cv.getContext('2d');
+  const g=cx.createRadialGradient(64,64,1,64,64,61);
+  g.addColorStop(0,'rgba(19,25,19,.56)');
+  g.addColorStop(.36,'rgba(17,23,19,.32)');
+  g.addColorStop(.78,'rgba(21,29,23,.09)');
+  g.addColorStop(1,'rgba(22,27,19,0)');
+  cx.fillStyle=g;cx.fillRect(0,0,128,128);
+  const texture=new THREE.CanvasTexture(cv);
+  texture.colorSpace=THREE.SRGBColorSpace;
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(radius*2,radius*2),
+    new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));
+  m.rotation.x=-Math.PI/2;
+  m.renderOrder=4;
+  scene.add(m);return m;
+}
+const playerGroundShadow=blobShadow(.95);
+
 const carPark={x:roadX(3)+4.8,z:3};
 const carRoot=new THREE.Group();scene.add(carRoot);carRoot.position.set(carPark.x,0,carPark.z);
 const cngRoot=new THREE.Group();cngRoot.rotation.y=Math.PI;carRoot.add(cngRoot);
@@ -463,6 +483,8 @@ function update(dt){
     const gait=Math.min(.62,player.speed*.095);
     person.limbs.forEach(({arm,leg},i)=>{const stride=Math.sin(elapsed*8.5+i*Math.PI)*gait;arm.rotation.x=-stride*.85;leg.rotation.x=stride;});
   }
+  playerGroundShadow.position.set(player.x,.08,player.z);
+  playerGroundShadow.visible=!player.riding;
   carRoot.position.set(player.riding?player.x:carPark.x,0,player.riding?player.z:carPark.z);
   carRoot.rotation.y=player.riding?player.angle:0;
   const near=Math.hypot(player.x-carPark.x,player.z-carPark.z)<6;
