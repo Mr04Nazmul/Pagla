@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { ASSETS, MISSIONS } from './asset-manifest.js';
+import { installRealism } from './realism.js';
 
 // Pagla v3 — real-time Three.js village. Progressive GLB assets are CC0; native
 // low-poly stand-ins remain visible if a model CDN request fails / is offline.
@@ -176,6 +177,7 @@ function setupVillage(){
   createRice();
 }
 setupVillage();
+const realism=installRealism({scene,renderer,sun,mobile,roadX,materials:{dirtMat,grassMat,tin,rust,brick}});
 
 const collisions=[{x:19,z:-29,w:9,d:8},{x:-17,z:-31,w:8,d:7},{x:13,z:-65,w:8,d:7},{x:-22,z:-65,w:9,d:7},{x:18,z:-104,w:10,d:7},{x:-15,z:-119,w:9,d:7},{x:28,z:31,w:8,d:7},{x:-20,z:43,w:9,d:7},{x:26,z:91,w:10,d:7},{x:-23,z:103,w:9,d:7},{x:-17,z:-91,w:9,d:6}];
 function blocked(x,z){if(Math.abs(x)>173||Math.abs(z)>170)return true;
@@ -275,7 +277,7 @@ $('start').addEventListener('click',()=>{playing=true;$('splash').classList.add(
 if(new URLSearchParams(location.search).has('autoplay'))$('start').click();
 
 let q=mobile?'low':'high',dpr=1;
-const quality=()=>{const density=Math.min(devicePixelRatio||1,mobile?(q==='high'?1.5:1.08):(q==='high'?1.8:1.22));dpr=density;renderer.setPixelRatio(dpr);$('toggle').textContent=`⚙︎ GRAPHICS: ${q.toUpperCase()}`;sun.castShadow=!mobile&&q==='high';renderer.shadowMap.enabled=!mobile&&q==='high';resize();};
+const quality=()=>{const density=Math.min(devicePixelRatio||1,mobile?(q==='high'?1.5:1.08):(q==='high'?1.8:1.22));dpr=density;renderer.setPixelRatio(dpr);$('toggle').textContent=`⚙︎ GRAPHICS: ${q.toUpperCase()}`;sun.castShadow=q==='high';renderer.shadowMap.enabled=q==='high';realism.setQuality(q);resize();};
 $('toggle').addEventListener('click',()=>{q=q==='high'?'low':'high';quality();toast(q==='high'?'✨ High quality':'⚡ Battery saver');});
 function resize(){const width=innerWidth,height=innerHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();}
 quality();addEventListener('resize',resize,{passive:true});
