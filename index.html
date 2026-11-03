@@ -1,92 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0c221b">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="Pagla - explore a 3D Bangladesh village on your iPhone or Android. Walk, drive CNG, finish village missions.">
-<title>পাগলা — গ্রামবাংলা Open World 3D</title>
-<style>
-:root{color-scheme:dark;--bg:rgba(7,27,20,.73);--border:rgba(225,246,195,.24);--green:#deffa7;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#34483a;color:#f5fff5}
-button{font:inherit;cursor:pointer}
-#game{position:fixed;inset:0;display:block;width:100vw;height:100dvh;touch-action:none}
-#hud{position:fixed;inset:0;pointer-events:none}
-#top{position:absolute;top:calc(env(safe-area-inset-top) + 9px);left:11px;right:11px;display:flex;justify-content:space-between;align-items:start;gap:7px}
-.panel{border:1px solid var(--border);background:var(--bg);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 8px 24px #07150a45;border-radius:15px;padding:10px 12px}
-#brand{max-width:min(60vw,270px)}.brandmark{letter-spacing:1.9px;color:#e5f8c5;text-transform:uppercase;font-size:9px;font-weight:850}
-#brand strong{display:block;font-size:19px;line-height:1.5;letter-spacing:.2px}
-#mission{display:block;font-size:10px;color:#e3f5d7;margin-top:3px}
-#assets{display:block;font-size:9px;color:#b8dcad;margin-top:5px}
-#minimap{width:105px;height:105px;border-radius:13px;border:1px solid #fff4;display:block;background:#71915b}
-#info{position:absolute;top:calc(env(safe-area-inset-top) + 148px);left:11px;display:flex;flex-direction:column;align-items:start;gap:7px}
-.chip{padding:8px 11px;border-radius:10px;background:rgba(5,31,19,.66);border:1px solid #ffffff29;font-size:11px;backdrop-filter:blur(8px)}
-#bottom{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 13px);left:12px;right:12px;display:flex;justify-content:space-between;align-items:end;gap:10px}
-#joystick{height:125px;width:125px;position:relative;pointer-events:auto;touch-action:none;border-radius:50%;background:#122e2673;border:2px solid #d3f5be80;box-shadow:inset 0 0 0 16px #ffffff13,0 10px 25px #0006}
-#knob{width:54px;height:54px;border-radius:50%;position:absolute;top:34px;left:34px;background:linear-gradient(145deg,#d8f1ca,#6c9f87);border:2px solid #e4ffe8;box-shadow:0 3px 13px #001c12ab}
-#buttons{display:flex;gap:8px;pointer-events:auto}
-.control{width:68px;min-height:66px;border-radius:16px;border:1px solid #dceeba6b;background:#12372dc9;color:white;font-size:12px;font-weight:800;backdrop-filter:blur(12px)}
-.control b{font-size:22px;display:block;margin-bottom:4px}
-.control:active{background:#5c836b}
-.control:disabled{opacity:.45}
-#toast{position:absolute;left:50%;top:25%;transform:translate(-50%,-8px);background:#0b281fe8;border:1px solid #d6f4ae8c;border-radius:13px;padding:12px 17px;font-weight:800;font-size:13px;max-width:80vw;text-align:center;opacity:0;transition:opacity .25s,transform .25s}
-#toast.show{opacity:1;transform:translate(-50%,0)}
-#intro{position:fixed;inset:0;z-index:3;background:linear-gradient(180deg,#132b1607 0%,#11291d39 37%,#04180fec 100%);display:flex;align-items:end;justify-content:center;padding:22px 18px calc(env(safe-area-inset-bottom) + 29px);text-align:center}
-#intro[hidden],#error[hidden]{display:none}
-#intro-inner{width:min(470px,100%)}
-#eyebrow{font-size:11px;letter-spacing:2px;color:#e6ffbd;font-weight:900}
-h1{font-size:clamp(43px,10.5vw,70px);letter-spacing:-1.8px;line-height:1.1;margin:11px 0 13px;text-shadow:0 7px 17px #001c1b}
-h1 em{font-style:normal;color:#d8ff98}
-#intro p{font-size:13px;line-height:1.8;color:#e0ecd6;margin:0 auto 17px;max-width:395px}
-#start{display:block;border:0;border-radius:16px;background:linear-gradient(120deg,#e4ffb1,#a6de8d);color:#1c3419;font-size:17px;font-weight:950;padding:16px;width:100%;box-shadow:0 7px 20px #0008}
-#subtitle{color:#cee0c4;font-size:11px;margin-top:14px}
-#error{position:fixed;z-index:10;inset:0;background:#10251c;padding:20vh 30px;font-size:16px;text-align:center}
-@media(min-width:900px){#bottom{max-width:830px;left:50%;transform:translateX(-50%)}#joystick{opacity:.75}}
-@media(max-width:390px){#joystick{height:111px;width:111px}#knob{top:27px;left:27px}#buttons{gap:6px}.control{width:59px;min-height:58px;font-size:11px}#minimap{width:91px;height:91px}#info{top:calc(env(safe-area-inset-top) + 132px)}}
-</style>
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0c211b">
+  <meta name="description" content="পাগলা — বাংলাদেশি গ্রাম অন্বেষণ করো। iPhone, Android এবং desktop-এ 3D ওয়েব গেম।">
+  <title>পাগলা — গ্রামবাংলার 3D অভিযান</title>
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,"Noto Sans Bengali","Noto Sans",sans-serif;--glass:rgba(6,23,20,.77);--edge:rgba(238,250,229,.16);--accent:#e3f59d}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;height:100dvh;background:#081a16;overflow:hidden;overscroll-behavior:none}button{font:inherit;cursor:pointer;touch-action:manipulation}canvas#game{display:block;width:100%;height:100%;touch-action:none}#hud{position:fixed;inset:0;pointer-events:none;color:#f2faef;text-shadow:0 1px 5px #07161090}#top{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:12px;right:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.panel{background:var(--glass);border:1px solid var(--edge);border-radius:16px;box-shadow:0 9px 32px #0005;backdrop-filter:blur(15px)}#titleCard{padding:12px 14px;max-width:min(68vw,310px)}#titleCard .tiny{display:block;letter-spacing:2px;color:var(--accent);font-size:9px;font-weight:800;text-transform:uppercase}#titleCard strong{font-size:18px;letter-spacing:.2px}#mission{font-size:11px;line-height:1.6;margin-top:5px;color:#e2eae1}#mission b{color:var(--accent)}#mapCard{padding:7px}#map{display:block;border-radius:12px;width:110px;height:110px;background:#568c65}#mapCard span{display:block;text-align:center;font-size:9px;margin-top:4px;color:#d5e5d9}#leftInfo{position:absolute;top:calc(env(safe-area-inset-top) + 127px);left:12px;display:flex;flex-direction:column;gap:7px}.info{padding:8px 10px;font-size:11px;max-width:220px}#bottom{position:absolute;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 15px);display:flex;align-items:flex-end;justify-content:space-between;gap:8px}#joystick{pointer-events:auto;border:2px solid #e7f5d84d;width:134px;height:134px;border-radius:50%;position:relative;touch-action:none;background:radial-gradient(circle,#3e654a66 0%,#08251dbc 68%);box-shadow:0 3px 24px #0006;user-select:none}#stick{position:absolute;left:37px;top:37px;width:60px;height:60px;border-radius:50%;background:linear-gradient(130deg,#f1f9dcbf,#90bba183);border:1px solid #fff9;box-shadow:0 2px 10px #0006;transform:translate(0,0)}.buttons{display:flex;gap:7px;pointer-events:auto;align-items:flex-end}.cmd{min-width:62px;min-height:64px;border-radius:14px;border:1px solid #f2fce64d;background:var(--glass);color:#f6ffee;padding:9px 8px;font-size:10px;font-weight:800;backdrop-filter:blur(14px)}.cmd b{display:block;font-size:23px;line-height:1.2;margin-bottom:2px}.cmd:active{background:#547058e6}.cmd:disabled{opacity:.48}#interact{border-color:#dbeaa7a6;min-width:74px}#fps{position:absolute;right:11px;bottom:calc(env(safe-area-inset-bottom) + 93px);font-size:10px;color:#ecf3e3a8}#toast{position:absolute;left:50%;top:27%;width:max-content;max-width:min(90vw,345px);transform:translate(-50%,-10px);padding:13px 16px;background:#071d17e8;border:1px solid #dff2b17d;border-radius:14px;text-align:center;font-size:13px;font-weight:700;line-height:1.6;opacity:0;transition:.25s}#toast.show{transform:translate(-50%,0);opacity:1}#splash{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;text-align:center;padding:22px 20px calc(env(safe-area-inset-bottom) + 38px);background:linear-gradient(180deg,#091b1008,#03150eb8 52%,#020d08f5);color:#f3fbea}#splash.hidden{display:none}.hero{max-width:490px;width:100%}.hero .eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:900}.hero h1{font-size:clamp(42px,10vw,76px);letter-spacing:-2px;line-height:1.04;margin:12px 0}.hero h1 em{color:var(--accent);font-style:normal}.hero p{font-size:13px;line-height:1.8;color:#e3eee2;margin:18px auto 22px;max-width:390px}#start{border:0;border-radius:15px;background:linear-gradient(135deg,#f0ffb4,#b5e398);padding:17px;width:100%;font-size:16px;font-weight:900;color:#12291c;box-shadow:0 10px 30px #0009}#assetInfo{font-size:11px;min-height:1.6em;line-height:1.6;margin-top:12px;color:#d6e9d2}#support{font-size:10px;margin-top:8px;color:#c0d5c4}#fail{display:none;position:fixed;inset:0;z-index:30;background:#091b17;color:#fff;padding:30px;align-items:center;justify-content:center;text-align:center;line-height:1.7}#help{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 5px);transform:translateX(-50%);font-size:8px;opacity:.45;white-space:nowrap}#toggle{position:absolute;top:calc(env(safe-area-inset-top) + 135px);right:12px;pointer-events:auto;padding:8px 10px;font-size:10px;color:#edf6de}#status{position:absolute;right:12px;top:calc(env(safe-area-inset-top) + 169px);font-size:9px;color:#e8f8d2;text-align:right}a{color:#e7f7b9}#about{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 158px);transform:translateX(-50%);font-size:10px;white-space:nowrap;opacity:.68}#errorText{font-size:11px;color:#fff3ac;margin-top:8px;line-height:1.5}
+    @media(hover:hover) and (pointer:fine){#joystick{opacity:.58}#support{font-size:11px}}@media(max-width:395px){#titleCard{padding:9px 11px}#titleCard strong{font-size:16px}#mission{font-size:10px}#map{width:96px;height:96px}#leftInfo{top:calc(env(safe-area-inset-top) + 115px)}#joystick{width:116px;height:116px}#stick{left:29px;top:29px;width:56px;height:56px}.cmd{min-width:57px;padding:9px 6px}#bottom{bottom:calc(env(safe-area-inset-bottom) + 12px)}#toggle{top:calc(env(safe-area-inset-top) + 118px)}#status{top:calc(env(safe-area-inset-top) + 152px)}}
+  </style>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"}}</script>
 </head>
 <body>
-<canvas id="game" aria-label="Pagla 3D Bangladesh village"></canvas>
+<canvas id="game" aria-label="Pagla 3D Bangladesh village game"></canvas>
 <div id="hud">
-  <div id="top">
-    <div id="brand" class="panel">
-      <div class="brandmark">Bangladesh · Mobile 3D</div>
-      <strong>পাগলা <span style="color:#dcffac">✦</span></strong>
-      <span id="mission">০/৩ মিশন সম্পন্ন</span>
-      <small id="assets">3D assets: preparing…</small>
-    </div>
-    <div class="panel" style="padding:5px"><canvas id="minimap" width="180" height="180" aria-label="গ্রামের ম্যাপ"></canvas></div>
-  </div>
-  <div id="info">
-    <div id="objective" class="chip">📍 🏠 গ্রামের বাড়ি</div>
-    <div id="speed" class="chip">🚶 হাঁটা · 0 km/h</div>
-  </div>
-  <div id="toast" role="status" aria-live="polite"></div>
-  <div id="bottom">
-    <div id="joystick" aria-label="Movement joystick"><div id="knob"></div></div>
-    <div id="buttons">
-      <button id="run" class="control" type="button"><b>⚡</b>দৌড়</button>
-      <button id="action" class="control" type="button" disabled><b>🛺</b>উঠো</button>
-      <button id="camera" class="control" type="button"><b>↻</b>ক্যামেরা</button>
-    </div>
-  </div>
+  <div id="top"><div class="panel" id="titleCard"><span class="tiny">Bangladesh · Village Open World</span><strong>পাগলা <span style="color:var(--accent)">✦</span></strong><div id="mission">মিশন: <b>গ্রামের ৩টি জায়গায় যাও</b></div></div><div class="panel" id="mapCard"><canvas width="220" height="220" id="map" aria-label="Mini map"></canvas><span>◉ GRAM BANGLA</span></div></div>
+  <div id="leftInfo"><div class="panel info" id="objective">📍 গন্তব্য: গ্রামের বাড়ি</div><div class="panel info" id="speed">🚶 হাঁটা · 0 km/h</div></div>
+  <button class="panel" id="toggle" type="button" aria-label="Toggle graphics quality">⚙︎ GRAPHICS: AUTO</button><div id="status"></div>
+  <div id="toast" role="status"></div>
+  <div id="bottom"><div id="joystick" aria-label="Move joystick"><div id="stick"></div></div><div class="buttons"><button class="cmd" id="run" type="button"><b>⚡</b>দৌড়</button><button class="cmd" id="interact" type="button"><b>🛺</b>উঠো</button><button class="cmd" id="camera" type="button"><b>↻</b>ভিউ</button></div></div><div id="fps" aria-live="off"></div><div id="help">Touch drag = camera · Joystick = move · Desktop: WASD / Shift / F</div>
 </div>
-<div id="intro">
-  <div id="intro-inner">
-    <div id="eyebrow">PAGLA · গ্রামবাংলার 3D OPEN WORLD</div>
-    <h1>আমার গ্রাম<br><em>আমার বাংলাদেশ</em></h1>
-    <p>ধানক্ষেত, টিনের বাড়ি, বাঁশঝাড়, গ্রামের পুকুর আর চায়ের দোকান। নিজে ঘুরে দেখো, CNG চালাও এবং তিনটি জায়গায় পৌঁছাও।</p>
-    <button id="start" type="button">▶ খেলা শুরু করো</button>
-    <div id="subtitle">📱 iPhone Safari / Android Chrome · Joystick + screen drag<br>উন্নত GLB সম্পদ ইন্টারনেট থেকে লোড হবে; তবুও gameplay চালু থাকবে।</div>
-  </div>
-</div>
-<div id="error" hidden role="alert"></div>
-<script type="module" src="./game-v3.js"></script>
+<div id="splash"><div class="hero"><div class="eyebrow">3D VILLAGE EXPLORER · THREE.JS</div><h1>আমার <em>গ্রাম</em><br>আমার বাংলাদেশ</h1><p>সবুজ ধানক্ষেত, কলাগাছ, বাঁশঝাড়, পুকুর আর চায়ের দোকান। গ্রাম ঘুরে দেখো, CNG চালাও, মিশন শেষ করো।</p><button id="start" type="button">▶ খেলা শুরু করো</button><div id="assetInfo">3D পরিবেশ প্রস্তুত হচ্ছে…</div><div id="support">📱 iPhone Safari / Android Chrome · 💻 Desktop browser</div><div id="errorText"></div></div></div>
+<div id="fail"><div><h2>3D Game চালু হয়নি</h2><p id="failMsg">Safari বা Chrome-এর আধুনিক সংস্করণ ও WebGL প্রয়োজন।</p><a href="./legacy.html">আগের হালকা সংস্করণ খেলো</a></div></div>
+<script type="module" src="./src/game.js"></script>
 </body>
 </html>
