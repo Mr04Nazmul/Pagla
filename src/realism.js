@@ -63,7 +63,7 @@ export function installRealism({scene,renderer,sun,mobile,roadX,materials}){
  dirtMat.normalScale=new THREE.Vector2(.38,.38);
  mapFrom(base+'brick_wall_001/brick_wall_001_diff_1k.jpg',brick,'map',1,1);
  // Atmospheric scattering sky, soft late-afternoon sun.
- const sky=new Sky();sky.scale.setScalar(450000);
+ const sky=new Sky();sky.scale.setScalar(245);sky.frustumCulled=false;sky.renderOrder=-1000;
  sky.material.uniforms.turbidity.value=9.5;
  sky.material.uniforms.rayleigh.value=2.25;
  sky.material.uniforms.mieCoefficient.value=.005;
@@ -124,5 +124,5 @@ export function installRealism({scene,renderer,sun,mobile,roadX,materials}){
   if(mobile){sun.shadow.mapSize.set(high?512:256,high?512:256);}
  }
  setQuality(mobile?'low':'high');
- return {setQuality,sky};
+ return {setQuality,update(camera){sky.position.copy(camera.position);},sky};
 }
