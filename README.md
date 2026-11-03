@@ -1,3 +1,22 @@
+# Pagla — গ্রামবাংলা Open World 3D 🇧🇩
+
+**Playable v3 browser game:** https://mr04nazmul.github.io/Pagla/  
+**Source:** [index.html](index.html), [game-v3.js](game-v3.js)  
+**Asset sources and licenses:** [ASSETS.md](ASSETS.md)  
+**Previous WebGL prototype:** [v2.html](v2.html)
+
+## Current web-game build
+
+- Three.js v0.180.0 mobile-oriented rendering and GLTFLoader for 7 **CC0 GLB** model types (banana, bamboo, tea stall, auto rickshaw, motorcycle, bicycle, produce stall).
+- Bangladesh-inspired 3D village with custom textured dirt road, rural tin-roof houses, fields, pond, road props and map.
+- Touch joystick, swipe camera, sprint, drivable auto rickshaw, three destination objectives.
+- iPhone Safari / Android Chrome targeting, capped mobile pixel ratio, optional 3D asset fallback.
+- **Realism limit:** this is an early playable mobile **prototype, not photorealistic GTA graphics**. Character/environment meshes are still largely procedural. Gameplay and page source are published; on-device GPU visual QA is not yet confirmed. 3D models depend on external CDN connectivity, and internet is required.
+
+---
+
+## Archived v2 notes
+
 # Pagla — গ্রামবাংলা 3D 🇧🇩
 
 A **playable 3D browser-game prototype** inspired by the rural villages of Bangladesh. Open the website in a WebGL-capable browser and press **খেলা শুরু করো**.
