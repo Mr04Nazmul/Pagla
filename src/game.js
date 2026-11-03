@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { installVillageUpgrade } from '../village-upgrade.js?v=20261103r5';
-import { ASSETS, MISSIONS } from './asset-manifest.js?v=20261103r4';
+import { ASSETS, MISSIONS } from './asset-manifest.js?v=20261103r5';
 import { installRealism } from './realism.js?v=20261103r4';
 import { createCharacterMotion } from './character-motion.js?v=20261103r4';
 import { decorateVillage } from './village-detail.js?v=20261103r4';
@@ -297,6 +297,10 @@ function progress(){
 function deployModel(key,root){
   const copy = (x,z,yaw=0,scale=1) => {const g=root.clone(true);g.position.set(x,0,z);g.rotation.y=yaw;g.scale.setScalar(scale);scene.add(g);return g;};
   switch(key){
+    // PAGLA_RURAL_ACTIVE_V5: rice and village crowd in real playable browser entry.
+    case 'ricePlant':for(const [x,z] of [[12,-10],[13,-11],[14,-10],[15,-11],[-13,-31],[-14,-33],[-15,-31],[13,39],[14,40],[15,41],[-16,61],[-17,62]])copy(x,z,rnd(0,6.28),1);break;
+    case 'villageMan':for(const [x,z,yaw] of [[roadX(-30)+6,-30,Math.PI],[-23,-88,1.4],[roadX(68)-8,68,.1]])copy(x,z,yaw,1);break;
+    case 'villageWoman':for(const [x,z,yaw] of [[roadX(-48)+6,-48,2.1],[-12,-92,1.1],[roadX(24)-8,24,3.2]])copy(x,z,yaw,1);break;
     case 'banana': for(const [x,z,s] of [[14,0,1],[24,2,1.07],[-16,-20,1.12],[34,-35,1.18],[-32,-51,1.1],[34,-83,1.0],[12,-111,1.2],[-25,50,1],[-24,93,1.1]])copy(x,z,rnd(0,6),s);break;
     case 'bamboo':for(const [x,z,s] of [[-30,-18,1.6],[38,-53,1.4],[45,-82,1.55],[-31,-101,1.8],[30,62,1.65],[42,103,1.4]])copy(x,z,rnd(0,6),s);break;
     case 'tea':copy(-17.6,-92.1,Math.PI,1);break;
