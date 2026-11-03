@@ -63,3 +63,18 @@ Original code in `src/cinematic-reference.js` adds a Bengali tea stall, roadside
 - License: Public Domain / Creative Commons Zero (CC0); 627KB, real-world scale, static. Browser CORS support and actual mobile GPU appearance have **not** been certified; the game retains geometry fallback.
 
 The look is still a real-time WebGL approximation. Do not imply that low-poly rice textures or procedural houses are photogrammetry or that the reference illustration is a gameplay capture.
+
+
+## r7 photographed surfaces (2026-11-03)
+
+CC0 sources from Poly Haven, imported as remote, optional **1K JPEG** texture maps. Original source pages:
+- https://polyhaven.com/a/leafy_grass
+- https://polyhaven.com/a/corrugated_iron
+- https://polyhaven.com/a/rusty_corrugated_iron
+- https://polyhaven.com/a/red_dirt_mud_01 (prior version, continues to be used for roads)
+
+Their diffuse/normal/roughness variants load asynchronously in `src/photo-materials.js`. If a particular map is unavailable or blocked, the generated local fallback texture stays in place. No API key required. Poly Haven CC0: https://polyhaven.com/license.
+
+`src/natural-foliage.js` and the near-player tea stall/canal geometry are original code with procedurally drawn leaf masks, not scanned photo assets. See `src/cinematic-reference.js` for near-player tea stall, bike and waterside details. The CC0 Innerscene motorcycle asset is still optional; backup mesh remains enabled on failure.
+
+Actual iPhone Safari, Android Chrome, and the remote photographic texture hosts have not yet been certified in a real GPU browser capture.
