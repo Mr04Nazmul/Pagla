@@ -16,8 +16,11 @@ export function decorateVillage(scene, { mobile=false }={}) {
   const leaves = new THREE.MeshStandardMaterial({color:0x2e6b32,roughness:.99,side:THREE.DoubleSide});
   const metal = new THREE.MeshStandardMaterial({color:0xa49c8b,metalness:.58,roughness:.55});
   const inst=[];
+  const boxGeometries=new Map();
   function box(parent, w,h,d,material, x=0,y=0,z=0){
-    const p=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+    const key=w+':'+h+':'+d;
+    if(!boxGeometries.has(key))boxGeometries.set(key,new THREE.BoxGeometry(w,h,d));
+    const p=new THREE.Mesh(boxGeometries.get(key),material);
     p.position.set(x,y,z);p.castShadow=!mobile;p.receiveShadow=true;parent.add(p);return p;
   }
   function pole(parent,x,y,z,height,radius=.055,material=darkWood){
@@ -51,7 +54,7 @@ export function decorateVillage(scene, { mobile=false }={}) {
     }
     const frontAwning=box(porch,8.65,.09,3.2,galvanized,0,2.95,-.22);
     frontAwning.rotation.x=-.045;
-    for(let i=-12;i<=12;i++){
+    for(let i=-12;i<=12;i+=(mobile?2:1)){
       const rib=box(porch,.027,.027,3.23,metal,i*.34,3.013,-.22);rib.rotation.x=-.045;
     }
     for(const wx of [-1.75,1.1]){
@@ -94,7 +97,7 @@ export function decorateVillage(scene, { mobile=false }={}) {
   const sign=new THREE.Mesh(new THREE.PlaneGeometry(8.0,1.75),signMat);
   sign.position.set(0,3.72,-3.35);sign.rotation.y=Math.PI;market.add(sign);
   box(market,8.5,.14,1.8,galvanized,0,3.13,-3.12);
-  for(let i=-12;i<=12;i++)box(market,.03,.035,1.8,metal,i*.34,3.22,-3.12);
+  for(let i=-12;i<=12;i+=(mobile?2:1))box(market,.03,.035,1.8,metal,i*.34,3.22,-3.12);
   for(const px of [-4,4])pole(market,px,1.57,-3.8,3.1,.075);
   box(market,5.4,.19,.95,darkWood,0,1.12,-3.58);
   for(let x=-2.4;x<=2.4;x+=1.2)box(market,.10,1.15,.10,lightWood,x,.53,-3.58);
@@ -122,5 +125,8 @@ export function decorateVillage(scene, { mobile=false }={}) {
       vegetable.position.set(Math.sin(i*2.4)*.23,.45,Math.cos(i*2.4)*.23);g.add(vegetable);
     }
   });
-  return {houseCount:houses.length,market};
+  return {houseCount:houses.length,market,update(x,z){
+    for(const group of inst)group.visible=Math.hypot(group.position.x-x,group.position.z-z)<(mobile?58:110);
+    market.visible=Math.hypot(-17-x,-91-z)<(mobile?64:120);
+  }};
 }
