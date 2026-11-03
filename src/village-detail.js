@@ -92,7 +92,7 @@ export function decorateVillage(scene, { mobile=false }={}) {
   const market=new THREE.Group();market.position.set(-17,0,-91);scene.add(market);
   const signMat=new THREE.MeshStandardMaterial({map:fadedText('ভাই ভাই চায়ের দোকান','চা • বিস্কুট • নাস্তা'),roughness:.88,side:THREE.DoubleSide});
   const sign=new THREE.Mesh(new THREE.PlaneGeometry(8.0,1.75),signMat);
-  sign.position.set(0,3.72,-3.35);market.add(sign);
+  sign.position.set(0,3.72,-3.35);sign.rotation.y=Math.PI;market.add(sign);
   box(market,8.5,.14,1.8,galvanized,0,3.13,-3.12);
   for(let i=-12;i<=12;i++)box(market,.03,.035,1.8,metal,i*.34,3.22,-3.12);
   for(const px of [-4,4])pole(market,px,1.57,-3.8,3.1,.075);
