@@ -1,0 +1,149 @@
+diff --git a/src/drive.js b/src/drive.js
+index 723b7fb..b1233e4 100644
+--- a/src/drive.js
++++ b/src/drive.js
+@@ -91,28 +91,28 @@ const CAR_PRESETS = [
+   {
+     id: 'sedan-sports',
+     name: 'GT Sports Coupe',
+-    url: '/models/car-kit/sedan-sports.glb',
++    url: 'https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/models/car-kit/sedan-sports.glb',
+     scaleY: 1.38,
+     hasSpoiler: true,
+   },
+   {
+     id: 'suv-luxury',
+     name: 'V8 Luxury SUV',
+-    url: '/models/car-kit/suv-luxury.glb',
++    url: 'https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/models/car-kit/suv-luxury.glb',
+     scaleY: 1.58,
+     hasSpoiler: false,
+   },
+   {
+     id: 'hatchback-sports',
+     name: 'Rally Hot Hatch',
+-    url: '/models/car-kit/hatchback-sports.glb',
++    url: 'https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/models/car-kit/hatchback-sports.glb',
+     scaleY: 1.40,
+     hasSpoiler: false,
+   },
+   {
+     id: 'sedan',
+     name: 'Executive Sedan',
+-    url: '/models/car-kit/sedan.glb',
++    url: 'https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/models/car-kit/sedan.glb',
+     scaleY: 1.42,
+     hasSpoiler: false,
+   },
+@@ -121,7 +121,7 @@ let currentCarPresetIndex = 0;
+ const carTemplates = new Map();
+ 
+ const textureLoader = new THREE.TextureLoader();
+-const carColormapTexture = textureLoader.load('/models/car-kit/Textures/colormap.png');
++const carColormapTexture = textureLoader.load('https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/models/car-kit/Textures/colormap.png');
+ carColormapTexture.colorSpace = THREE.SRGBColorSpace;
+ 
+ CAR_PRESETS.forEach((preset) => {
+diff --git a/src/facade-loader.js b/src/facade-loader.js
+index 76e24ed..e767610 100644
+--- a/src/facade-loader.js
++++ b/src/facade-loader.js
+@@ -11,7 +11,7 @@ class FacadeTextureError extends Error {
+ 
+ /** @param {THREE.WebGLRenderer} renderer */
+ export async function loadFacadeTextures(renderer) {
+-  const compressed = new KTX2Loader().setTranscoderPath('/basis/').setWorkerLimit(2);
++  const compressed = new KTX2Loader().setTranscoderPath('https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/basis/').setWorkerLimit(2);
+   compressed.detectSupport(renderer);
+   const fallback = new THREE.TextureLoader();
+   const anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+@@ -21,11 +21,11 @@ export async function loadFacadeTextures(renderer) {
+     /** @type {THREE.Texture} */
+     let texture;
+     try {
+-      texture = await compressed.loadAsync(`/textures/facades/${name}.ktx2`);
++      texture = await compressed.loadAsync(`https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/textures/facades/${name}.ktx2`);
+     } catch (cause) {
+       console.warn(`Compressed facade ${name} unavailable; using PNG fallback.`, cause);
+       try {
+-        texture = await fallback.loadAsync(`/textures/facades/${name}.png`);
++        texture = await fallback.loadAsync(`https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/textures/facades/${name}.png`);
+         texture.flipY = false;
+       } catch (fallbackCause) {
+         throw new FacadeTextureError(name, fallbackCause);
+diff --git a/src/facades.js b/src/facades.js
+index 4755f26..ffea6b3 100644
+--- a/src/facades.js
++++ b/src/facades.js
+@@ -152,7 +152,7 @@ function loadImage(slug, mapName = 'color') {
+     const img = new Image();
+     img.onload = () => resolve(img);
+     img.onerror = () => resolve(null);
+-    img.src = `/textures/${slug}/${mapName}.jpg`;
++    img.src = `https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/textures/${slug}/${mapName}.jpg`;
+   });
+ }
+ 
+diff --git a/src/main.js b/src/main.js
+index 294eaae..9e0c9eb 100644
+--- a/src/main.js
++++ b/src/main.js
+@@ -351,7 +351,7 @@ async function main() {
+   // downloads overlap instead of queueing. Awaited at the facade stage below.
+   const facadesPromise = loadFacadeTextures(renderer);
+   facadesPromise.catch(() => {}); // surfaced by the await below, not as an unhandled rejection
+-  const res = await fetch(district.scene);
++  const res = await fetch('https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/'+district.scene);
+   if (!res.ok) throw new Error(`Could not load ${district.scene} (${res.status})`);
+   const scene = await res.json();
+ 
+@@ -420,7 +420,7 @@ async function main() {
+   // REAL businesses OSM records at that address. Non-fatal if it 404s.
+   let frontage = null;
+   try {
+-    const fres = await fetch('street-pallabi.json');
++    const fres = await fetch('https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/street-pallabi.json');
+     if (fres.ok) {
+       frontage = buildStreetFrontage(await fres.json(), scene, [428135535, 352027195, 352027475]);
+       scene3.add(frontage.group);
+diff --git a/src/map/fullmap-view.js b/src/map/fullmap-view.js
+index 6eb9cec..61a9f61 100644
+--- a/src/map/fullmap-view.js
++++ b/src/map/fullmap-view.js
+@@ -79,7 +79,7 @@ export class FullmapView {
+ 
+   async _loadOverview() {
+     try {
+-      const res = await fetch('map-overview.json');
++      const res = await fetch('https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/map-overview.json');
+       if (!res.ok) return;
+       const data = await res.json();
+       this._overview = data;
+diff --git a/src/models.js b/src/models.js
+index 6283ab8..a553d51 100644
+--- a/src/models.js
++++ b/src/models.js
+@@ -9,7 +9,7 @@
+  * API
+  * ---
+  * loadModel(url) -> Promise<THREE.Group>
+- *   Loads a glTF/GLB from `url` (relative to /public, e.g. '/models/car-kit/
++ *   Loads a glTF/GLB from `url` (relative to /public, e.g. 'https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/models/car-kit/
+  *   sedan.glb'). Results are cached by url — a second call for the same url
+  *   returns (a clone of) the same cached promise's result instantly, it does
+  *   not re-fetch or re-parse. The resolved value is `gltf.scene` (a
+diff --git a/src/textures.js b/src/textures.js
+index 1902d20..7bf3b2a 100644
+--- a/src/textures.js
++++ b/src/textures.js
+@@ -28,8 +28,8 @@ import * as THREE from 'three';
+ // Vite serves public/ at the site root, so the assets live at /textures/...
+ // (new URL('../public/...', import.meta.url) resolved to a broken /@fs/ path
+ // and every load silently failed; advisor fix 2026-09-07.)
+-const MANIFEST_URL = '/textures/MANIFEST.json';
+-const BASE_URL = '/textures/';
++const MANIFEST_URL = 'https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/textures/MANIFEST.json';
++const BASE_URL = 'https://raw.githubusercontent.com/kolinabir/Mirpur-Drive/3e6fe746169279e2a80058e561cbf9601d4599b7/public/textures/';
+ 
+ let manifestPromise = null;
+ // P11-C (docs/briefs/P11-C-ENV-AND-TEXTURE-SHARING.md), finding 2: this used
