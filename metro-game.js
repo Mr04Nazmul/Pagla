@@ -29,11 +29,11 @@ function tree(x,z,parent,r=4){cyl(.48,.8,6,M.bark,x,3,z,parent);const foliage=ne
 function car(x,z,dir,color,parent){const g=new THREE.Group();g.position.set(x,1.5,z);g.rotation.y=dir?0:Math.PI;box(2.2,1.2,4.9,mat(color,.47,.1),0,0,0,g);box(1.9,.7,2.4,M.glass,0,.83,-.15,g);for(let a of [-1,1])for(let b of [-1.5,1.6]){const w=new THREE.Mesh(new THREE.CylinderGeometry(.43,.43,.2,12),M.black);w.rotation.z=Math.PI/2;w.position.set(a*1.13,-.55,b);g.add(w);}parent.add(g);return g;}
 const length=stations.at(-1).z+580;
 box(680,.1,length+800,M.ground,0,-.32,(length-450)/2);
-for(let sx of [-74,74]){box(85,.22,length+800,M.road,sx,.1,(length-450)/2);for(let lane of [-27,-9,9,27])for(let z=-300;z<length+150;z+=26)box(.43,.038,10,M.line,sx+lane,.24,z);}
+const dMarker=new THREE.Object3D(),markers=[];for(let sx of [-74,74]){box(85,.22,length+800,M.road,sx,.1,(length-450)/2);for(let lane of [-27,-9,9,27])for(let z=-300;z<length+150;z+=26)markers.push([sx+lane,.24,z]);}const laneMarks=new THREE.InstancedMesh(new THREE.BoxGeometry(.43,.038,10),M.line,markers.length);markers.forEach((p,i)=>{dMarker.position.set(...p);dMarker.updateMatrix();laneMarks.setMatrixAt(i,dMarker.matrix)});laneMarks.instanceMatrix.needsUpdate=true;laneMarks.frustumCulled=false;scene.add(laneMarks);
 for(let side of [-1,1]){box(10,.3,length+800,M.sidewalk,side*121,.26,(length-450)/2);box(2,.2,length+800,M.yellow,side*113,.30,(length-450)/2);}
 box(15,1.1,length+800,M.concrete,0,18.5,(length-450)/2);
 box(1.2,.45,length+800,M.tie,0,19.28,(length-450)/2);
-for(let z=-350;z<length+300;z+=4.5)box(9,.32,.7,M.tie,0,19.75,z);
+const sleeperCount=Math.ceil((length+650)/4.5),sleepers=new THREE.InstancedMesh(new THREE.BoxGeometry(9,.32,.7),M.tie,sleeperCount);for(let i=0;i<sleeperCount;i++){dMarker.position.set(0,19.75,-350+i*4.5);dMarker.updateMatrix();sleepers.setMatrixAt(i,dMarker.matrix);}sleepers.instanceMatrix.needsUpdate=true;sleepers.frustumCulled=false;scene.add(sleepers);
 for(let x of [-3.4,3.4])box(.16,.31,length+800,M.rail,x,20.0,(length-450)/2);
 for(let z=-280;z<length+220;z+=34){const p=new THREE.Group();p.position.z=z;scene.add(p);cyl(2.8,3.8,18,M.darkConcrete,0,9,z);box(12,2.2,7.5,M.concrete,0,18,z);box(.36,12,.36,M.rail,-5.9,27,z);box(8,.2,.2,M.rail,-2,33,z);line([-1,33,z],[-1,35,z],M.rail,.07);line([-1,35,z],[-1,35,z+34],M.black,.06);}
 const districts=[];
