@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#081923">
+<title>Dhaka Metro MRT-6 · 3D Train Driver Game</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:system-ui,-apple-system,'Noto Sans Bengali',sans-serif;color:#effaf8;background:#071721}
+#scene{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none;background:linear-gradient(180deg,#769db4 0%,#adcbd0 50%,#d4d1bf 100%)}
+#vignette{position:fixed;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(4,17,27,.25) 0%,transparent 24%,transparent 64%,rgba(2,12,17,.24) 100%)}
+.header{position:fixed;top:0;left:0;right:0;z-index:6;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:calc(14px + env(safe-area-inset-top)) 16px 12px;pointer-events:none}
+.brand{padding:12px 13px;border-radius:16px;background:rgba(3,18,27,.80);border:1px solid #8bbabb45;backdrop-filter:blur(18px);box-shadow:0 10px 30px #0004;pointer-events:auto}
+.brand strong{display:block;letter-spacing:1.3px;font-size:clamp(13px,2.3vw,18px)}.brand small{display:block;margin-top:3px;color:#aac5ca;font-size:11px}
+.live{border:1px solid #93e9b965;color:#aef3cb;background:rgba(5,37,32,.82);border-radius:99px;padding:10px 12px;font-size:11px;font-weight:750;pointer-events:auto;white-space:nowrap}
+.live span{display:inline-block;background:#63dca0;width:7px;height:7px;border-radius:50%;margin-right:6px;box-shadow:0 0 10px #63dca0}
+#worldTag{position:absolute;left:50%;top:40%;z-index:3;pointer-events:none;transform:translate(-50%,-125%);min-width:140px;max-width:230px;text-align:center;padding:8px 13px;border-radius:10px;background:#06382ddc;border:1px solid #94d4b8c2;box-shadow:0 6px 16px #061c2188}
+#worldTag strong{display:block;font-size:14px;letter-spacing:1px}#worldTag span{display:block;margin-top:1px;color:#d6f5e9;font-size:12px}
+#worldTag:after{content:"";position:absolute;top:100%;height:14px;width:2px;left:50%;background:#9ce5c6;opacity:.7}
+.hint{position:absolute;bottom:calc(172px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:rgba(5,20,27,.77);color:#e6faf4;border:1px solid #95bcb74f;border-radius:50px;padding:7px 14px;font-size:11px;white-space:nowrap;pointer-events:none;z-index:3}
+.panel{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(770px,calc(100% - 20px));z-index:8;background:linear-gradient(135deg,#071b27eb,#102a33ed);border:1px solid #99c8bc5d;backdrop-filter:blur(20px);border-radius:23px;padding:13px 14px 12px;box-shadow:0 10px 40px #0007}
+.titleRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.titleRow .title{font-size:14px;font-weight:850;letter-spacing:.4px}.titleRow .status{font-size:11px;color:#b7d1d1}.titleRow .status b{color:#7de3b2}
+.controls{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:8px}button,select{appearance:none;border:1px solid #a9cecd65;border-radius:12px;background:#143641;color:#f4fafa;font:700 12px system-ui,-apple-system,sans-serif;padding:12px 9px;min-height:42px;cursor:pointer;min-width:0}button:active{transform:scale(.98)}button.selected{background:#218d7a;border-color:#b0f1d5;color:white}select{width:100%;background:#16333c;color:#e7fbf4;white-space:nowrap;text-overflow:ellipsis}
+.second{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:9px}.second button{min-height:35px;padding:8px 10px;font-size:11px}.speed{display:flex;align-items:center;gap:7px;font-size:10px;color:#c3d8d9;white-space:nowrap;flex:1}.speed input{width:100%;accent-color:#39c6a0;min-width:40px}
+.stats{display:flex;justify-content:space-between;gap:7px;margin-top:8px;align-items:center;color:#a7c1c5;font-size:10px;line-height:1.35}.stats a{color:#76eecb;text-decoration:none;font-weight:650}
+#toast{display:none;position:fixed;left:50%;top:24%;transform:translateX(-50%);z-index:12;background:#0a232c;border:1px solid #7bddb9;padding:14px 18px;border-radius:16px;box-shadow:0 12px 40px #0008;font-size:13px;max-width:90vw;text-align:center}
+#load{position:absolute;inset:0;background:#071721df;z-index:15;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:22px}#load strong{font-size:20px}#load p{font-size:13px;color:#bed6d8;max-width:330px;line-height:1.65;margin:0}.spinner{border:3px solid #7bc1c743;border-top-color:#62daba;border-radius:50%;width:44px;height:44px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.header{padding-left:10px;padding-right:10px}.brand{padding:10px 11px}.brand strong{font-size:12px}.brand small{font-size:10px}.live{font-size:9px;padding:9px 10px}.panel{padding:11px;border-radius:20px}.controls{grid-template-columns:1.5fr 1fr 1fr}.controls select{grid-column:span 3}.controls button{font-size:11px}.second{gap:5px}.second button{font-size:10px;padding:6px 8px}.hint{bottom:calc(184px + env(safe-area-inset-bottom));font-size:10px}.stats{font-size:9px}#worldTag{max-width:170px;padding:6px 8px}#worldTag strong{font-size:12px}#worldTag span{font-size:10px}}
+
+.header,.hint{display:none!important}
+#legacyPanel{display:none}.panel.expanded{display:block!important;z-index:25;bottom:calc(216px + env(safe-area-inset-bottom))}
+.glass{background:#061f2be9;border:1px solid #8fdac27c;border-radius:15px;backdrop-filter:blur(17px);box-shadow:0 7px 24px #0006}
+#hudTop{position:fixed;z-index:9;top:calc(12px + env(safe-area-inset-top));left:10px;right:10px;display:flex;justify-content:space-between;gap:6px;pointer-events:none}
+#gameLogo{padding:10px 12px;max-width:56%}#gameLogo strong{display:block;font-size:clamp(12px,2.8vw,17px)}#gameLogo small{font-size:9px;color:#b0d2cc}
+#hudNums{display:flex;gap:6px}#hudNums>div{min-width:62px;text-align:center;padding:7px}#hudNums b{display:block;font-size:22px;font-variant-numeric:tabular-nums}#hudNums small{font-size:9px;color:#b1cfca}
+#mission{position:fixed;top:calc(85px + env(safe-area-inset-top));left:10px;padding:10px 12px;z-index:8;pointer-events:none;max-width:75vw}
+#mission small{font-size:9px;letter-spacing:1px;color:#7ce5bf}#missionName{display:block;font-weight:800;font-size:16px;margin:4px 0}#mission p{margin:0;font-size:10px;color:#c0d8d4}
+.meter{background:#235160;height:5px;margin-top:9px;border-radius:8px;overflow:hidden}.meter div{height:100%;width:0;background:#62e7b3}
+#gameDock{position:fixed;z-index:10;bottom:calc(8px + env(safe-area-inset-bottom));left:8px;right:8px;max-width:760px;margin:auto;padding:10px;border:1px solid #7dc3b97c;border-radius:20px;background:#061d2cf5;backdrop-filter:blur(19px);box-shadow:0 15px 37px #0009}
+#gameDock select,#gameDock button{border-radius:12px;min-height:40px;font-size:11px}
+.dockRow{display:flex;gap:7px;margin-bottom:8px}.dockRow select{flex:2;min-width:0}.dockRow button{flex:1;min-width:0;padding:8px 3px}.dockRow button.on{background:#15846b}
+.pedals{display:grid;grid-template-columns:1.25fr 1.25fr .85fr;gap:7px}.pedals button{min-height:66px!important;font-size:12px!important;font-weight:850;touch-action:none;user-select:none;-webkit-user-select:none}
+.pedals button span{display:block;opacity:.65;font-size:10px;margin-top:5px}#accel{background:#187b56;border-color:#76f7bb}#accel.pressed{background:#32c594}#brake{background:#ac453e;border-color:#ee9f96}#brake.pressed{background:#e46b60}#doors:disabled{opacity:.4}
+.tools{display:flex;gap:5px;margin-top:8px}.tools button{flex:1;padding:8px 2px;min-width:0;min-height:34px!important;font-size:10px!important}
+#driveState{text-align:center;font-size:10px;color:#a2d9c8;margin:0 0 7px}
+#gameMsg{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);padding:12px;background:#082635ec;border:1px solid #6be7b9;border-radius:12px;opacity:0;transition:opacity .2s;text-align:center;font-size:12px;max-width:95vw;min-width:240px;pointer-events:none}
+@media(max-width:480px){#gameLogo{padding:8px;max-width:50%}#gameLogo small{font-size:8px}#hudNums b{font-size:18px}#hudNums>div{min-width:55px;padding:7px 3px}#missionName{font-size:14px}#gameDock{padding:8px}.pedals button{min-height:60px!important;font-size:11px!important}.tools button{font-size:9px!important}#legacyPanel.expanded{bottom:calc(224px + env(safe-area-inset-bottom))}}
+
+</style>
+</head>
+<body>
+<canvas id="scene" aria-label="Interactive 3D model of a stylized Dhaka Metro station neighborhood"></canvas>
+<div id="vignette"></div>
+<div id="hudTop"><div id="gameLogo" class="glass"><strong>🚆 DHAKA METRO MRT-6</strong><small>3D TRAIN DRIVER · BANGLADESH</small></div><div id="hudNums"><div class="glass"><b id="hudSpeed">0</b><small>KM/H</small></div><div class="glass"><b id="hudScore">0</b><small>SCORE</small></div></div></div>
+<div id="mission" class="glass"><small>NEXT STOP · পরবর্তী স্টেশন</small><strong id="missionName">আগারগাঁও</strong><p>স্টেশন পর্যন্ত <b id="hudDist">215 m</b> · ট্রেন থামিয়ে দরজা খোলো</p><div class="meter"><div id="progressBar"></div></div></div>
+<div id="gameDock"><div id="gameMsg" role="status"></div><p id="driveState">MANUAL DRIVE · ACCEL / BRAKE</p>
+<div class="dockRow"><select id="district" aria-label="Station area"><option value="agargaon">আগারগাঁও</option><option value="farmgate">ফার্মগেট</option><option value="mirpur10">মিরপুর ১০</option><option value="shahbag">শাহবাগ</option><option value="motijheel">মতিঝিল</option><option value="uttara">উত্তরা উত্তর</option></select><button id="auto">◎ AUTO OFF</button><button id="next">NEXT ▶</button></div>
+<div class="pedals"><button id="accel">▲ ACCELERATE<span>Hold · W / ↑</span></button><button id="brake">▼ BRAKE<span>Hold · S / ↓</span></button><button id="doors" disabled>⇄ DOORS</button></div>
+<div class="tools"><button id="gameCam">🎥 FOLLOW</button><button id="horn">📢 HORN</button><button id="dayNight">☀ DAY</button><button id="restart">↺ RESET</button><button id="extra">⚙ MORE</button></div></div>
+
+<div class="header"><div class="brand"><strong>DHAKA METRO <span style="color:#6ce3bf">3D</span> STUDIO</strong><small>MRT-6 inspired • 6 area models • Offline viewer</small></div><div class="live"><span></span>3D PROTOTYPE</div></div>
+<div id="worldTag"><strong id="nameEnglish">AGARGAON</strong><span id="nameBangla">আগারগাঁও</span></div>
+<div class="hint">↔ Rotate · Pinch / scroll zoom · ▶ Train moving</div>
+<div id="toast"></div>
+<div class="panel" id="legacyPanel"><div class="titleRow"><div class="title" id="stationTitle">🚇 আগারগাঁও · AGARGAON</div><div class="status">MODEL <b id="tris">3D</b> · <span id="fps">--</span> fps</div></div>
+<div class="controls"><select id="station" title="Choose model"><option value="agargaon">আগারগাঁও · Agargaon</option><option value="farmgate">ফার্মগেট · Farmgate</option><option value="mirpur10">মিরপুর ১০ · Mirpur 10</option><option value="shahbag">শাহবাগ · Shahbag</option><option value="motijheel">মতিঝিল · Motijheel</option><option value="uttara">উত্তরা উত্তর · Uttara North</option></select>
+<button id="play" class="selected">⏸ Pause train</button><button id="follow">🚆 Follow</button><button id="top">▦ Top view</button></div>
+<div class="second"><button id="reset">⟳ Reset</button><button id="capture">📷 Save image</button><div class="speed">TRAIN SPEED <input type="range" id="speed" min="8" max="42" value="24"><b id="speedval">24</b>m/s</div></div>
+<div class="stats"><span>Rough artistic reconstruction, not surveyed building geometry or live train tracking.</span><a id="glbLink" download="agargaon.glb" href="agargaon.glb">↓ GLB Model</a></div></div>
+<div id="load"><div class="spinner"></div><strong>ঢাকা মেট্রো 3D লোড হচ্ছে</strong><p>রঙিন ভবন, elevated track, station roof, রাস্তা, গাড়ি, গাছ ও মেট্রো ট্রেন। এটি বাস্তব এলাকার আনুমানিক শিল্পসম্মত মডেল।</p></div>
+<script id="packed" type="application/json">{}</script>
+<script>
+'use strict';
+// Self-contained WebGL 2 renderer: zero CDN or network requirements.
+const META={"agargaon":{"en":"AGARGAON","bn":"আগারগাঁও","description":"Green government district · pond & trees","triangles":69960},"farmgate":{"en":"FARMGATE","bn":"ফার্মগেট","description":"Dense shops · busy streets","triangles":85084},"mirpur10":{"en":"MIRPUR 10","bn":"মিরপুর ১০","description":"Commercial blocks · interchange roads","triangles":72470},"shahbag":{"en":"SHAHBAG","bn":"শাহবাগ","description":"Tree-lined cultural district","triangles":60692},"motijheel":{"en":"MOTIJHEEL","bn":"মতিঝিল","description":"Downtown offices · high-rises","triangles":119010},"uttara":{"en":"UTTARA NORTH","bn":"উত্তরা উত্তর","description":"Uttara streets · more open blocks","triangles":38640}};
+const DATA=JSON.parse(document.getElementById('packed').textContent);
+const cvs=document.getElementById('scene');const gl=cvs.getContext('webgl2',{antialias:true,alpha:true,depth:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+const $=id=>document.getElementById(id);const load=$('load');const toast=$('toast');
+function say(t){toast.textContent=t;toast.style.display='block';clearTimeout(say.timer);say.timer=setTimeout(()=>toast.style.display='none',2800)}
+if(!gl){load.innerHTML='<strong>WebGL 2 চালু করা যায়নি</strong><p>Chrome / Safari / Edge-এ GPU acceleration চালু করে আবার খুলো। ZIP-এর GLB ফাইলগুলো Blender-এও দেখা যাবে।</p>';throw new Error('No WebGL2')}
+if(!window.DecompressionStream){load.innerHTML='<strong>এই ব্রাউজারে gzip decompression নেই</strong><p>iOS Safari 16.4+ বা নতুন Chrome ব্যবহার করো।</p>';throw new Error('No DecompressionStream')}
+const VS=`#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPosition;
+layout(location=1) in vec3 aNormal;
+layout(location=2) in vec3 aColor;
+uniform mat4 uViewProj;uniform vec3 uTranslation;uniform vec3 uEye;uniform float uEvening;
+out vec3 vColor;out float vFog;
+void main(){vec3 p=aPosition/64.0+uTranslation;gl_Position=uViewProj*vec4(p,1.0);vec3 n=normalize(aNormal);vec3 sun=normalize(vec3(-0.44,0.87,0.40));float lambert=max(dot(n,sun),0.0);float light=0.65+0.38*lambert+0.10*max(n.y,0.0);vColor=aColor*light;vColor=mix(vColor,vec3(0.30,0.43,0.54)*light,uEvening*0.33);vFog=clamp((distance(p,uEye)-180.0)/770.0,0.0,0.57);}`;
+const FS=`#version 300 es
+precision mediump float;in vec3 vColor;in float vFog;uniform float uEvening;out vec4 FragColor;
+void main(){vec3 fog=mix(vec3(.67,.80,.84),vec3(.17,.27,.39),uEvening);FragColor=vec4(mix(vColor,fog,vFog),1.0);}`;
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s}
+const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,VS));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+const uVP=gl.getUniformLocation(program,'uViewProj'),uTranslation=gl.getUniformLocation(program,'uTranslation'),uEye=gl.getUniformLocation(program,'uEye'),uEvening=gl.getUniformLocation(program,'uEvening');
+gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);
+function perspective(fov,aspect,near,far){let f=1/Math.tan(fov/2),nf=1/(near-far);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0])}
+function lookAt(eye,target){let z=norm(sub(eye,target)),x=norm(cross([0,1,0],z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1])}
+function mm(a,b){const r=new Float32Array(16);for(let j=0;j<4;j++)for(let i=0;i<4;i++)r[j*4+i]=a[i]*b[j*4]+a[4+i]*b[j*4+1]+a[8+i]*b[j*4+2]+a[12+i]*b[j*4+3];return r}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}function sub(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]}function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}function norm(a){let l=Math.hypot(...a)||1;return a.map(v=>v/l)}
+async function decode(str){const b=atob(str),arr=new Uint8Array(b.length);for(let i=0;i<b.length;i++)arr[i]=b.charCodeAt(i);const blob=new Blob([arr]);let stream=blob.stream().pipeThrough(new DecompressionStream('gzip'));const raw=await new Response(stream).arrayBuffer();return raw}
+function makeMesh(raw){const vao=gl.createVertexArray();gl.bindVertexArray(vao);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,raw,gl.STATIC_DRAW);
+gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.SHORT,false,12,0);
+gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.BYTE,true,12,6);
+gl.enableVertexAttribArray(2);gl.vertexAttribPointer(2,3,gl.UNSIGNED_BYTE,true,12,9);
+gl.bindVertexArray(null);return {vao,buffer,count:raw.byteLength/12}}
+const meshes={};let active='agargaon',playing=true,following=false,topMode=false;let trainZ=-165,trainDir=1,speed=24,orbitTheta=-0.60,orbitPhi=0.91,orbitR=420;let drag=false,lastX=0,lastY=0,pinch=0,focus=[0,18,0];let lastTime=0,frames=0,fpsBase=0,evening=0,tagVP=null;
+async function getMesh(key){if(meshes[key])return meshes[key];if(!DATA[key]){const paths=key==='motijheel'?['assets/motijheel-1.txt','assets/motijheel-2.txt']:['assets/'+key+'.txt'];const parts=await Promise.all(paths.map(async p=>{const r=await fetch(p);if(!r.ok)throw Error('HTTP '+r.status+' '+p);return r.text()}));DATA[key]=parts.join('')}const raw=await decode(DATA[key]);const mesh=makeMesh(raw);meshes[key]=mesh;return mesh}
+async function selectStation(key){if(!META[key])return;active=key;let m=META[key];$('station').value=key;$('stationTitle').textContent='🚇 '+m.bn+' · '+m.en;$('nameEnglish').textContent=m.en;$('nameBangla').textContent=m.bn;$('tris').textContent=(m.triangles/1000).toFixed(0)+'k △';$('glbLink').href=key+'.glb';$('glbLink').download=key+'.glb';$('glbLink').title='Available in the ZIP archive';
+load.style.display='flex';load.querySelector('p').textContent='এলাকার রঙিন 3D মডেল প্রস্তুত করা হচ্ছে...';try{await getMesh(key);load.style.display='none';trainZ=-165;following=false;topMode=false;$('follow').classList.remove('selected');$('top').classList.remove('selected')}catch(e){console.error(e);load.innerHTML='<strong>লোড করা যায়নি</strong><p>'+e.message+'</p>'}}
+function cameraEye(){if(following){return [[120,96,trainZ-130*trainDir],[4.4,24,trainZ+38*trainDir]]}if(topMode){return [[0,580,0],[0,0,0]]}let eye=[focus[0]+orbitR*Math.sin(orbitPhi)*Math.sin(orbitTheta),focus[1]+orbitR*Math.cos(orbitPhi),focus[2]+orbitR*Math.sin(orbitPhi)*Math.cos(orbitTheta)];return [eye,focus]}
+function resize(){const dpr=Math.min(devicePixelRatio||1,1.65);let w=Math.floor(cvs.clientWidth*dpr),h=Math.floor(cvs.clientHeight*dpr);if(w!==cvs.width||h!==cvs.height){cvs.width=w;cvs.height=h;gl.viewport(0,0,w,h)}}
+function worldLabel(vp){const p=[0,52,0,1],q=[0,0,0,0];for(let i=0;i<4;i++)q[i]=vp[i]*p[0]+vp[4+i]*p[1]+vp[8+i]*p[2]+vp[12+i];const label=$('worldTag');if(q[3]<=0){label.style.display='none';return}let x=(q[0]/q[3]*.5+.5)*cvs.clientWidth,y=(-q[1]/q[3]*.5+.5)*cvs.clientHeight;label.style.display='block';label.style.left=x+'px';label.style.top=y+'px';if(following||topMode){label.style.display='none'}}
+function draw(t){const dt=Math.min(.06,Math.max(0,(t-lastTime)/1000));lastTime=t;resize();if(playing){trainZ+=trainDir*speed*dt;if(trainZ>260){trainZ=260;trainDir=-1}else if(trainZ< -260){trainZ=-260;trainDir=1}}
+const [eye,target]=cameraEye();const vp=mm(perspective(Math.PI/3.7,cvs.width/cvs.height,.8,1700),lookAt(eye,target));gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(program);gl.uniformMatrix4fv(uVP,false,vp);gl.uniform3fv(uEye,eye);gl.uniform1f(uEvening,evening);
+function render(mesh,x,z){if(!mesh)return;gl.uniform3f(uTranslation,x,0,z);gl.bindVertexArray(mesh.vao);gl.drawArrays(gl.TRIANGLES,0,mesh.count)}render(meshes[active],0,0);render(meshes['mrt6_train'],4.4,trainZ);gl.bindVertexArray(null);worldLabel(vp);
+frames++;if(t-fpsBase>1100){$('fps').textContent=Math.round(frames*1000/(t-fpsBase));fpsBase=t;frames=0}requestAnimationFrame(draw)}
+$('station').addEventListener('change',ev=>selectStation(ev.target.value));$('play').addEventListener('click',()=>{playing=!playing;$('play').textContent=playing?'⏸ Pause train':'▶ Run train';$('play').classList.toggle('selected',playing)});
+$('follow').addEventListener('click',()=>{following=!following;topMode=false;$('follow').classList.toggle('selected',following);$('top').classList.remove('selected')});
+$('top').addEventListener('click',()=>{topMode=!topMode;following=false;$('top').classList.toggle('selected',topMode);$('follow').classList.remove('selected')});
+$('reset').addEventListener('click',()=>{following=topMode=false;orbitTheta=-.60;orbitPhi=.91;orbitR=420;focus=[0,18,0];$('follow').classList.remove('selected');$('top').classList.remove('selected');say('ক্যামেরা রিসেট হয়েছে')});
+$('speed').addEventListener('input',e=>{speed=Number(e.target.value);$('speedval').textContent=speed});
+$('capture').addEventListener('click',()=>{const a=document.createElement('a');a.download='dhaka-metro-'+active+'-3d.png';a.href=cvs.toDataURL('image/png');a.click();say('3D screenshot প্রস্তুত')});
+$('glbLink').addEventListener('click',e=>{if(location.protocol==='file:'){say('GLB ফাইল ZIP থেকে এক্সট্র্যাক্ট করে Blender / 3D Viewer-এ খুলো')}});
+// One-finger orbit, two-finger zoom, scroll zoom. No external controls library.
+let pointers=new Map();cvs.addEventListener('pointerdown',e=>{pointers.set(e.pointerId,[e.clientX,e.clientY]);cvs.setPointerCapture(e.pointerId);drag=true;lastX=e.clientX;lastY=e.clientY});
+cvs.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const old=pointers.get(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);if(pointers.size===1){if(following||topMode)return;orbitTheta-=(e.clientX-old[0])*.0055;orbitPhi=Math.min(1.48,Math.max(.18,orbitPhi-(e.clientY-old[1])*.0055))}else if(pointers.size===2){const ps=[...pointers.values()];let d=Math.hypot(ps[0][0]-ps[1][0],ps[0][1]-ps[1][1]);if(pinch)orbitR=Math.max(65,Math.min(970,orbitR*pinch/d));pinch=d}});
+function pointerDone(e){pointers.delete(e.pointerId);if(pointers.size<2)pinch=0}cvs.addEventListener('pointerup',pointerDone);cvs.addEventListener('pointercancel',pointerDone);
+cvs.addEventListener('wheel',e=>{e.preventDefault();if(following||topMode)return;orbitR=Math.max(65,Math.min(970,orbitR*(e.deltaY>0?1.10:.91)))},{passive:false});
+// Manage device recovery after tab switch
+window.addEventListener('visibilitychange',()=>{lastTime=performance.now()});
+(async()=>{try{await getMesh('mrt6_train');await selectStation('agargaon');fpsBase=performance.now();lastTime=fpsBase;requestAnimationFrame(draw)}catch(e){load.innerHTML='<strong>ডেমো চালু হয়নি</strong><p>'+e.message+'</p>';console.error(e)}})();
+</script>
+<script>(function(){
+'use strict';
+playing=false;
+const g=id=>document.getElementById(id);
+const route=['agargaon','farmgate','mirpur10','shahbag','motijheel','uttara'];
+let index=0,velocity=0,pos=-215,acc=false,braking=false,auto=false,done=false,elapsed=0,t0=performance.now(),score=0,context=null,cab=false,missed=false;
+try{score=Number(localStorage.getItem('mrt6DemoScore'))||0}catch{}
+function msg(s){const e=g('gameMsg');e.textContent=s;e.style.opacity=1;clearTimeout(msg.timeout);msg.timeout=setTimeout(()=>e.style.opacity=0,3200)}
+function beep(f=650,d=.18){try{context=context||new(window.AudioContext||window.webkitAudioContext)();if(context.state==='suspended')context.resume();const o=context.createOscillator(),v=context.createGain();o.type='sine';o.frequency.value=f;v.gain.setValueAtTime(.03,context.currentTime);v.gain.exponentialRampToValueAtTime(.0001,context.currentTime+d);o.connect(v);v.connect(context.destination);o.start();o.stop(context.currentTime+d)}catch{}}
+function update(){g('hudSpeed').textContent=Math.round(velocity*3.6);g('hudScore').textContent=score.toLocaleString('en-US');g('hudDist').textContent=Math.round(-pos)+' m';g('missionName').textContent=META[route[index]].bn+' · '+META[route[index]].en;g('progressBar').style.width=Math.max(0,Math.min(100,(pos+215)/215*100))+'%';g('doors').disabled=done||Math.abs(pos)>16||velocity>.9;g('doors').textContent=done?'✓ DONE':'⇄ DOORS';g('auto').textContent=auto?'◉ AUTO ON':'◎ AUTO OFF';g('auto').classList.toggle('on',auto);g('driveState').textContent=done?'✓ MISSION COMPLETE':auto?'AUTO PILOT · STATION APPROACH':'MANUAL DRIVE · HOLD ACCEL / BRAKE'}
+function reset(){velocity=0;pos=-215;trainZ=pos;elapsed=0;done=false;auto=false;acc=false;braking=false;missed=false;update()}
+function select(key){index=Math.max(0,route.indexOf(key));g('district').value=route[index];reset();selectStation(route[index]).then(()=>{trainZ=pos}).catch(e=>msg('Model load error: '+e.message))}
+function finish(){if(done)return;if(velocity>.9||Math.abs(pos)>16){msg('প্ল্যাটফর্মে ট্রেন পুরোপুরি থামাও');return}done=true;auto=false;velocity=0;let points=Math.max(40,Math.round(180-7*Math.abs(pos)-elapsed*.32));score+=points;try{localStorage.setItem('mrt6DemoScore',score)}catch{}msg('🎉 '+META[route[index]].bn+' · +'+points+' POINTS');beep(820,.23);update()}
+function pedal(id,key){const el=g(id);const set=(v,e)=>{if(e)e.preventDefault();if(v)auto=false;if(key==='a')acc=v;else braking=v;el.classList.toggle('pressed',v)};el.addEventListener('pointerdown',e=>{try{el.setPointerCapture(e.pointerId)}catch{}set(true,e)});['pointerup','pointercancel','lostpointercapture'].forEach(t=>el.addEventListener(t,e=>set(false,e)));window.addEventListener('blur',()=>set(false))}
+pedal('accel','a');pedal('brake','b');
+window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['w','s','arrowup','arrowdown',' '].includes(k)){e.preventDefault();auto=false;if(k==='w'||k==='arrowup'){acc=true;g('accel').classList.add('pressed')}else{braking=true;g('brake').classList.add('pressed')}}});
+window.addEventListener('keyup',e=>{let k=e.key.toLowerCase();if(k==='w'||k==='arrowup'){acc=false;g('accel').classList.remove('pressed')}if(['s','arrowdown',' '].includes(k)){braking=false;g('brake').classList.remove('pressed')}});
+g('doors').addEventListener('click',finish);g('next').addEventListener('click',()=>{if(!done)msg('এই স্টেশনের পয়েন্ট বাদ দিয়ে পরের স্টেশনে');select(route[(index+1)%route.length])});
+g('district').addEventListener('change',e=>select(e.target.value));g('auto').addEventListener('click',()=>{auto=!auto;acc=false;braking=false;msg(auto?'Auto Pilot চালু':'Manual Driving চালু')});
+g('restart').addEventListener('click',()=>{reset();msg('নতুন যাত্রা শুরু')});g('horn').addEventListener('click',()=>beep(320,.4));
+const oldCamera=cameraEye;cameraEye=function(){return cab?[[4.4,28.6,trainZ+15],[4.4,26.4,trainZ+95]]:oldCamera()};
+g('gameCam').addEventListener('click',()=>{if(!following&&!cab){following=true;topMode=false;g('gameCam').textContent='🚆 CAB'}else if(following){following=false;cab=true;g('gameCam').textContent='◉ ORBIT'}else{cab=false;following=false;g('gameCam').textContent='🎥 FOLLOW'}});
+g('dayNight').addEventListener('click',()=>{evening=evening>.5?0:1;cvs.style.background=evening?'linear-gradient(#152a43,#4a5870)':'linear-gradient(#769db4,#adcbd0 50%,#d4d1bf)';g('dayNight').textContent=evening?'🌙 NIGHT':'☀ DAY'});
+g('extra').addEventListener('click',()=>g('legacyPanel').classList.toggle('expanded'));
+document.addEventListener('visibilitychange',()=>{t0=performance.now();if(document.hidden){acc=false;braking=false}});
+function tick(t){const dt=Math.max(0,Math.min(.05,(t-t0)/1000));t0=t;
+if(!done){elapsed+=dt;if(auto){const d=Math.max(0,-pos),desired=Math.min(25,Math.sqrt(7.6*Math.max(0,d-2))*.88);if(d<1.2&&velocity<1.3){pos=0;velocity=0;auto=false;msg('পৌঁছেছ! DOORS টিপে পয়েন্ট সংগ্রহ করো');beep(720,.2)}else{acc=velocity<desired-.2;braking=velocity>desired+.2}}
+if(braking)velocity=Math.max(0,velocity-6.5*dt);else if(acc)velocity=Math.min(27,velocity+3.4*dt);else velocity=Math.max(0,velocity-.28*dt);
+pos+=velocity*dt;trainZ=pos;if(pos>40&&!missed){missed=true;auto=false;acc=false;msg('⚠ স্টেশন পার হয়ে গেছ · RESET চাপো')}}
+else{velocity=0;trainZ=pos}
+if(Math.floor(t/100)!==tick.last){tick.last=Math.floor(t/100);update()}requestAnimationFrame(tick)}
+reset();requestAnimationFrame(tick);
+})();</script>
+</body>
+</html>

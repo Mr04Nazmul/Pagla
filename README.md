@@ -18,3 +18,9 @@ Mobile-first 3D train driver prototype for GitHub Pages.
 - H / Horn plays a synthetic test sound.
 
 No personal data collected. Three.js: MIT License.
+
+## Detailed station-area game mode
+
+Choose **🏙 HD 3D AREAS** on the main game screen or visit [studio/](./studio/) for six separately modeled colored station districts: Agargaon, Farmgate, Mirpur 10, Shahbag, Motijheel and Uttara North. Hold accelerate/brake; stop near the platform and open doors to score. These detailed models are original artistic approximations, not scans of actual buildings. Assets are stored under studio/assets/ and loaded as needed.
+
+Older Kobe/GramBangla work is preserved in branch backup-before-dhaka-mrt6-game-2026-11-04.
