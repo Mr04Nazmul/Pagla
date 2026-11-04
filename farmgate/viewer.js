@@ -1,0 +1,14 @@
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#acbbc7');scene.fog=new THREE.Fog('#acbbc7',200,600);
+const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,1500);camera.position.set(-94,38,19);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(24,12,3);controls.enableDamping=true;controls.maxPolarAngle=Math.PI*.49;controls.maxDistance=350;controls.minDistance=8;controls.update();
+scene.add(new THREE.HemisphereLight(0xd4e8ff,0x817056,2));const sun=new THREE.DirectionalLight(0xffe3bd,3);sun.position.set(-80,110,30);scene.add(sun);
+const moving=[];let running=false,offset=0;const status=document.getElementById('status');
+const packed=await fetch('./model.txt');if(!packed.ok)throw Error('Model HTTP '+packed.status);const bytes=Uint8Array.from(atob(await packed.text()),c=>c.charCodeAt(0));const buffer=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();new GLTFLoader().parse(buffer,'',g=>{scene.add(g.scene);g.scene.traverse(o=>{if(o.isMesh){o.frustumCulled=true;if(/^(Metro[ _]coach|Green[ _]livery[ _]stripe|Train[ _]window|Red[ _]train[ _]door|Train[ _]bogie|Train[ _]green[ _]nose|Cab[ _]windshield)/i.test(o.name))moving.push([o,o.position.x]);}});status.textContent='3D প্রস্তুত · আনুমানিক মডেল, বাস্তব এলাকার স্ক্যান নয়';},e=>{status.textContent='লোড হয়নি—ইন্টারনেট পরীক্ষা করে আবার খোলো';console.error(e);});
+document.getElementById('move').onclick=()=>{running=!running;document.getElementById('move').textContent=running?'থামাও':'চালাও';};
+let view=0;const views=[[-94,38,19,24,12,3],[0,130,0,0,0,0],[60,26,23,30,15,4]];document.getElementById('view').onclick=()=>{view=(view+1)%views.length;const v=views[view];camera.position.set(...v.slice(0,3));controls.target.set(...v.slice(3));controls.update();};
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+const clock=new THREE.Clock();renderer.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.05);if(running){offset+=dt*5;if(offset>35)offset=-25;for(const [o,x]of moving)o.position.x=x+offset;}controls.update();renderer.render(scene,camera);});
