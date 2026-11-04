@@ -1,109 +1,20 @@
-## Four-repository hybrid gameplay upgrade (3 November 2026)
+# Dhaka Metro MRT-6 — playable 3D train simulator
 
-The active web game now adds a **rideable motorcycle** to its CNG. Both use Pagla's original acceleration, braking, reverse, turning and collision-stop routines (`src/vehicle-dynamics.js`). Walk to the motorcycle near the starting road and press **উঠো**, or press **F** on desktop. The mobile joystick steers and accelerates while riding. The original quest system is preserved.
+Mobile-first 3D train driver prototype for GitHub Pages.
 
-The **🌿 SPLAT: OFF/ON** control lazily imports Spark.js, generating an optional Gaussian-splat foliage layer over existing Three.js meshes (`src/four-repo-hybrid.js`). It defaults to OFF on all devices, particularly to protect iPhone RAM. Low-quality mode hides the layer. The base game continues without it if Spark.js or WebGL2 is unavailable. This is procedural foliage, **not a scanned Bangladeshi village**, and therefore cannot yet duplicate the reference screenshot.
+- 16 selected current MRT-6 stations with Bengali/English station names in simplified straight-line order.
+- Train acceleration and braking, station stops +100 points, keyboard and iPhone touch controls, auto-drive, horn, day/night, free camera / driver camera / follow / top-down view.
+- Procedural colored station areas, multi-storey buildings, road traffic, green curved station roofs, elevated viaduct, rail track and overhead equipment.
+- Run `index.html` through GitHub Pages. Three.js is fetched from jsDelivr; internet required.
+- **Environment geometry is not a photogrammetry scan or geodetically accurate OSM reconstruction.** It is an original visual game prototype. No actual passenger or train GPS.
+- The 16 stations are **compressed** into a stylized line for quick playable inspection; the complete actual route alignment, elevation, building facades and catenary details require separately checked GIS data and reference modeling.
+- Source is editable in `metro-game.js`; starting work before the replacement remains accessible via git history and the archive branch.
 
-Four source projects reviewed:
-- [Spark.js](https://github.com/sparkjsdev/spark), MIT: actual optional SparkRenderer and procedural SplatMesh runtime integration.
-- [Worldsplats](https://github.com/philchacko/worldsplats), MIT: hybrid splat and mesh rendering + mobile-first progressive toggling approaches, independently implemented.
-- [Simple 3D Open World](https://github.com/yusufmalikul/simple-3d-open-world), MIT: seeded, instanced procedural scenery and touch-friendly performance patterns, independently implemented.
-- [Mini GTA 6](https://github.com/imNauman/mini-gta6), **no license confirmed**: high-level vehicle and open-world design patterns only. No unlicensed source files were copied.
+## Controls
+- Press-and-hold ACCELERATE / BRAKE, or W / S / Space on keyboard.
+- Driver / Follow / Free / Top camera.
+- Choose station and Preview to explore.
+- Auto drive for automatic stopping.
+- H / Horn plays a synthetic test sound.
 
-**Verification limitations:** GitHub source updates are not the same as successful real-iPhone rendering. Mobile graphics, streamed GLB availability, CDN imports, and framerate still require device-level testing. The game is a real playable web prototype, but not the user's reference image recreated in photoreal 3D.
-
-# Pagla — গ্রামবাংলার 3D অভিযান 🇧🇩
-
-A **playable mobile-first 3D village exploration game** that works in iPhone Safari and Android Chrome with WebGL. This repository serves a static game via GitHub Pages: https://mr04nazmul.github.io/Pagla/
-
-
-## Cinematic web realism pass — November 3, 2026
-
-`src/realism.js` now adds a Three.js physically based outdoor rendering layer: photographed CC0 mud and brick textures (with procedural fallback), fine surface bump/normal response, weathered corrugated metal, atmospheric sunset sky, irregular wet road puddles, instanced roadside grass, and real-scale road gravel. The hero system attempts a 2.9 MB CC0 animated plaid-shirt character GLB (Walk/Run) and keeps the original character if that host is unavailable. See `assets/CREDITS.md` for source links.
-
-**Quality toggle:** Low graphics is the mobile-first default; High enables extra detail and shadow mapping, which may reduce frame rate on older phones. These are rendering upgrades, **not a GTA-quality photorealistic scene**. The low-poly houses, countryside trees, and simplified vehicle physics still need more accurate high-fidelity assets for a screenshot-level match. Third-party CDN downloads and GPU/FPS on real iPhone/Android hardware have not been confirmed.
-
-## Playable village mission + HD assets update (November 3, 2026)
-
-After an iPhone screenshot showed a low-poly environment and static T-pose hero, the browser game received another targeted rebuild:
-
-- `src/character-motion.js`: validates GLB clip track bindings, uses embedded Walk/Run when compatible, and creates a breathing/standing and walking fallback to prevent a frozen T pose.
-- Corrected the muddy road triangle winding, photographed brick texture filename and UV repeat.
-- `src/village-detail.js`: original detailed tin house facades, verandas, windows/shutters, wood posts, Bengali tea stall signage, kettle, market counter, glasses and roadside props; distant details are hidden on mobile.
-- Clumped/instanced tree crowns replace single sharp-edged polyhedra; soft contact shadow helps ground the hero on phones.
-- Nine extra verified CC0 GLBs: two dairy cows, goat, palm, undergrowth, hay, trough, milk churns and wheelbarrow. Two CC0 humanoid NPCs attempt to load at the quest points with original fallback meshes.
-- **Interaction-based quest**: talk to a village member -> recover lost document by the pond -> deliver it at the tea shop. Action button, objective marker, mini-map and taka rewards.
-- `.github/workflows/mobile-smoke.yml` and `tests/mobile-smoke.mjs`: Chromium WebGL checks at iPhone-like, Android-like and landscape viewports, with screenshots as artifacts.
-
-**Limitations:** A headless Chromium viewport does not prove real Safari/Android GPU compatibility. The scene is still a realistic-leaning WebGL prototype, not GTA-level photo realism. Some buildings are procedural, some models are lower detail, and mobile network/FPS are device-dependent. Static farm animals are not rigged; the CNG has simplified physics. All third-party assets are loaded progressively from their sources and may fail on bad networks.
-
-## November 2026 Three.js / glTF upgrade
-
-- **Real `GLTFLoader` integration** for seven CC0 `.glb` models from 3DAssets.dev (banana, bamboo, tea stall, bicycle, motorcycle, CNG/auto-rickshaw, charpoy). Each is rendered in the world, with exact asset URLs, verified asset pages, and licence information in [`assets/CREDITS.md`](assets/CREDITS.md). The GLB files are streamed over an official CORS-enabled CDN, not checked into Git. Their embedded textures are used directly.
-- Replaced handcrafted WebGL rendering on the root landing page with a pinned **Three.js** ES module/import-map and physically based materials. The original browser version remains available at [`legacy.html`](legacy.html), and comparison version at `v2.html`.
-- Curved dirt road with procedural texture, rice field instancing, real-world-scale tin-roof village houses, wet patches, pond, bamboo fences, electric poles and wires, atmospheric fog, daylight, and multiple village props.
-- Animated third-person character, on-foot walking and sprinting, 3-step exploration mission, minimap, **enter/drive/exit CNG**, perspective drag and camera cycling.
-- Mobile pointer-captured virtual joystick, touch camera, on-screen controls, iOS safe-area HUD, WebGL renderer quality setting, bounded DPR, low-power mode, basic FPS display and automatic quality reduction under sustained low FPS.
-- `manifest.webmanifest` and SVG icon for add-to-home-screen affordances. This is **not an offline PWA**, because Third-party CDN JS/GLB resources require network access.
-
-### How to play
-
-1. Open https://mr04nazmul.github.io/Pagla/ using Safari on iPhone or Chrome on Android (landscape mode recommended).
-2. Tap **খেলা শুরু করো**, steer with the joystick, swipe/drag the world to rotate the camera. **দৌড়** = sprint. **উঠো** near the CNG = drive; **নামো** = exit.
-3. Complete the three destinations (house, pond, tea stall) as marked on the minimap.
-
-Desktop controls: `W/A/S/D` or arrow keys to move, drag the world with the mouse to look around, `Shift` to sprint, `F` to enter/exit CNG.
-
-### Files
-
-- `index.html` — mobile UI, splash screen, pinned import map.
-- `src/game.js` — Three.js world, lighting, material geometry, player, joystick and missions, renderer and runtime model integration.
-- `src/asset-manifest.js` — CC0 model links, known dimensions, mission data.
-- `assets/CREDITS.md` — direct model source and licence list.
-- `assets/icon.svg`, `manifest.webmanifest` — home-screen icon and metadata.
-- `legacy.html`, `v2.html` — older playable prototypes for fallback/comparison.
-- `Unreal/GramBangla/` — separate UE5 prototype for desktop future work (not supported by GitHub Pages hosting).
-
-### Development / deployment
-
-Static hosting only; **no server, cloud database, credentials, paid APIs or build step**. GitHub Pages publishes root `index.html` from `main`. All imports are root-relative or project-relative, so the same code works under `/Pagla/`.
-
-To test locally, run a static web server such as `python3 -m http.server 8080` in the repository root. Launch the served URL in a current browser. The web page must be served over HTTP(S), not `file://`, for ES modules and GLBs.
-
-### Quality and verification notes
-
-This is **a playable 3D browser prototype with third-party GLB assets; it is not GTA V or photo-realistic AAA rendering**. The model thumbnails and pages are verified for their licences and source URLs, but actual iPhone Safari/Android Chrome GPU screenshots and cross-device FPS must be tested on real phones. The CNG follows direct game controls with simplified vehicle physics; no road AI, advanced collisions, NPCs or engine audio yet. The browser must be online for the CDN resources.
-
-When new CC BY assets are used in the future, add exact author, title, source link, license link and any changes here; do not omit attribution. Right now this integration only uses CC0 external models.
-
-## Ownership
-
-Original game code and layout belong to the Pagla repository owner. External packages and 3D asset licensing are separately recorded in [`assets/CREDITS.md`](assets/CREDITS.md). All rights reserved for original project content unless separately licensed.
-
-## Village realism expansion (2026-11-03)
-
-The current mobile browser edition now imports `village-upgrade.js`, which extends the Three.js v3 game without replacing controls or missions. Added: six original corrugated-tin village houses, a weathered metal texture for existing roofs, small near-camera fields of imported CC0 rice plants, static CC0 villager man/woman GLBs around homes and bazaar, an imported corrugated market shed, and a more detailed CC0 cow model. Four additional original villagers walk simple paths with arm motion. Asset loading status is visible separately in the HUD.
-
-All GLB files are loaded from the source CDN at runtime and can fail independently; original fallback gameplay remains playable. The imported human models are *static low-poly figures*, not photorealistic rigged actors. The models do not yet provide native iOS/Android game packages or advanced physics. This is still a mobile-friendly 3D web prototype, not GTA V quality.
-
-See [ASSETS.md](ASSETS.md) for all source asset URLs and CC0 licensing.
-
-## Picture-reference visual pass (2026-11-03, r6)
-
-The active web entrypoint now loads `src/cinematic-reference.js`. It adds an original detailed Bangladeshi tea stall with a Bengali sign, cups/kettle/benches, a denser instanced rice layer, bamboo fencing, lotus patches at the mission pond, and a roadside motorcycle. The motorcycle first attempts an optional realistic CC0 GLB (Innerscene) and falls back to original geometry if the remote host blocks it. This upgrade changes **interactive 3D geometry**, not just the splash image.
-
-Graphics toggle cycles `LOW → HIGH → CINEMATIC → LOW`. On mobile a slow frame rate triggers a step down to keep it playable. On modern iPhone/Android, users can choose cinematic, but performance and appearance are hardware dependent. The original generated reference picture is an *illustrative target*, not proof of achieved photorealism. This prototype still cannot reproduce the exact level of an offline AAA game screenshot, especially in Safari on phones. The real WebGL/GPU render must be device-tested.
-
-
-## Photo-reference visual scene (r7, 2026-11-03)
-
-This revision changes the actual playable WebGL scene, not the landing page's background image.
-
-- Starting composition: third-person player near a roadside motorbike, a right-hand Bengali tea stall and left-hand roadside canal/lilies.
-- Old solid spherical tree clusters are replaced by procedurally textured, leaf-shaped cross-card instanced foliage. The foliage is a mobile-friendly *approximation*, not photogrammetry.
-- `src/photo-materials.js` attempts 1K photographed CC0 Poly Haven PBR maps for leafy ground and corrugated galvanized/rusted sheet metal. Failed downloads preserve existing procedural surfaces; game controls are independent from model loading.
-- `src/natural-foliage.js` generates an original alpha-tested tree crown atlas, keeping relatively low geometry/draw cost.
-- Starts in `CINEMATIC` quality, with fallback to HIGH then LOW when phone framerate drops. Users can cycle settings.
-- Original missions, joystick, third-person movement, driving and existing optional 3D models are retained.
-
-**Important:** This is not identical to the earlier AI-generated promotional picture, and no screenshot/render or FPS on a physical iPhone was confirmed by this commit. The photorealism target requires further scanned foliage, environment models and rigorous mobile testing.
+No personal data collected. Three.js: MIT License.
